@@ -3,7 +3,7 @@ import jakarta.validation.constraints.NotBlank;
 
 public record CreateWorkflowRequest(
 
-        @NotBlank
+        @NotBlank(message = "Workflow name is required")
         String name,
         String description
 
