@@ -7,8 +7,10 @@ import com.flowforge.workflowservice.presentation.dto.WorkflowResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -30,5 +32,23 @@ public class WorkflowController {
                 userId,
                 organizationId
         );
+    }
+
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<WorkflowResponse> getAllWorkflows(
+            @RequestHeader("X-Organization-Id")
+            UUID organizationId
+    ) {
+        return   workflowService.getAllWorkflows(organizationId);
+    }
+
+    @GetMapping("/{id}")
+    public WorkflowResponse getWorkflowById(
+            @PathVariable UUID id,
+            @RequestHeader("X-Organization-Id")
+            UUID organizationId
+    ) {
+        return workflowService.getWorkflowById(id, organizationId);
     }
 }
