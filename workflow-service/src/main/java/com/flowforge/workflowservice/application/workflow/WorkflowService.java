@@ -4,9 +4,11 @@ import com.flowforge.workflowservice.domain.workflow.Workflow;
 import com.flowforge.workflowservice.domain.workflow.WorkflowStatus;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowRepository;
 import com.flowforge.workflowservice.presentation.dto.CreateWorkflowRequest;
+import com.flowforge.workflowservice.presentation.dto.UpdateWorkflowRequest;
 import com.flowforge.workflowservice.presentation.dto.WorkflowResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -52,7 +54,34 @@ public class WorkflowService {
                 .findByIdAndOrganizationId(workflowId, organizationId)
                 .orElseThrow(() ->
                         new RuntimeException("Workflow not found"));
-
         return workflowMapper.toResponse(workflow);
+    }
+
+    @Transactional
+    public WorkflowResponse updateWorkflow(
+            UUID workflowId,
+            UUID organizationId,
+            UpdateWorkflowRequest request
+    ) {
+        Workflow workflow = workflowRepository
+                .findByIdAndOrganizationId(workflowId, organizationId)
+                .orElseThrow(() ->
+                        new RuntimeException("Workflow not found"));
+        workflow.setName(request.name());
+        workflow.setDescription(request.description());
+        Workflow updated = workflowRepository.save(workflow);
+        return workflowMapper.toResponse(updated);
+    }
+
+    @Transactional
+    public void deleteWorkflow(UUID workflowId,UUID organizationId) {
+        System.out.println("workflowId = " + workflowId);
+        System.out.println("organizationId = " + organizationId);
+        Workflow workflow = workflowRepository
+                .findByIdAndOrganizationId(workflowId, organizationId)
+                .orElseThrow(() -> new RuntimeException(
+                        "Workflow not found"
+                ));
+        workflowRepository.delete(workflow);
     }
 }

@@ -3,6 +3,7 @@ package com.flowforge.workflowservice.presentation.rest;
 
 import com.flowforge.workflowservice.application.workflow.WorkflowService;
 import com.flowforge.workflowservice.presentation.dto.CreateWorkflowRequest;
+import com.flowforge.workflowservice.presentation.dto.UpdateWorkflowRequest;
 import com.flowforge.workflowservice.presentation.dto.WorkflowResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -50,5 +51,31 @@ public class WorkflowController {
             UUID organizationId
     ) {
         return workflowService.getWorkflowById(id, organizationId);
+    }
+
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public WorkflowResponse updateWorkflow(
+            @PathVariable UUID id,
+            @RequestHeader("X-Organization-Id")
+            UUID organizationId,
+            @Valid
+            @RequestBody
+            UpdateWorkflowRequest request
+    ) {
+        return workflowService.updateWorkflow(
+                id,
+                organizationId,
+                request
+        );
+    }
+
+    @DeleteMapping("/{workflowId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteWorkflow(
+            @PathVariable UUID workflowId,
+            @RequestHeader("X-Organization-Id") UUID organizationId
+    ) {
+        workflowService.deleteWorkflow(workflowId,organizationId);
     }
 }
