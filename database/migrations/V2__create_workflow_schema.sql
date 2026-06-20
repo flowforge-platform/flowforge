@@ -1,5 +1,5 @@
 CREATE TABLE workflows (
-                           id BIGSERIAL PRIMARY KEY,
+                           id UUID PRIMARY KEY,
 
                            organization_id UUID NOT NULL,
 
@@ -25,9 +25,9 @@ CREATE TABLE workflows (
 );
 
 CREATE TABLE workflow_nodes (
-                                id BIGSERIAL PRIMARY KEY,
+                                id UUID PRIMARY KEY,
 
-                                workflow_id BIGINT NOT NULL,
+                                workflow_id UUID NOT NULL,
 
                                 node_key VARCHAR(100) NOT NULL,
 
@@ -48,13 +48,13 @@ CREATE TABLE workflow_nodes (
 );
 
 CREATE TABLE workflow_edges (
-                                id BIGSERIAL PRIMARY KEY,
+                                id UUID PRIMARY KEY,
 
-                                workflow_id BIGINT NOT NULL,
+                                workflow_id UUID NOT NULL,
 
-                                source_node_id BIGINT NOT NULL,
+                                source_node_id UUID NOT NULL,
 
-                                target_node_id BIGINT NOT NULL,
+                                target_node_id UUID NOT NULL,
 
                                 created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -75,9 +75,9 @@ CREATE TABLE workflow_edges (
 );
 
 CREATE TABLE workflow_executions (
-                                     id BIGSERIAL PRIMARY KEY,
+                                     id UUID PRIMARY KEY,
 
-                                     workflow_id BIGINT NOT NULL,
+                                     workflow_id UUID NOT NULL,
 
                                      organization_id UUID NOT NULL,
 
@@ -103,11 +103,11 @@ CREATE TABLE workflow_executions (
 );
 
 CREATE TABLE task_executions (
-                                 id BIGSERIAL PRIMARY KEY,
+                                 id UUID PRIMARY KEY,
 
-                                 workflow_execution_id BIGINT NOT NULL,
+                                 workflow_execution_id UUID NOT NULL,
 
-                                 node_id BIGINT NOT NULL,
+                                 node_id UUID NOT NULL,
 
                                  status VARCHAR(50) NOT NULL,
 
