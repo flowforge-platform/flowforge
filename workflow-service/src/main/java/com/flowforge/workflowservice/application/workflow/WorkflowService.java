@@ -1,5 +1,7 @@
 package com.flowforge.workflowservice.application.workflow;
 
+import com.flowforge.workflowservice.common.exception.BusinessException;
+import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.workflow.Workflow;
 import com.flowforge.workflowservice.domain.workflow.WorkflowStatus;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowRepository;
@@ -53,7 +55,7 @@ public class WorkflowService {
         Workflow workflow = workflowRepository
                 .findByIdAndOrganizationId(workflowId, organizationId)
                 .orElseThrow(() ->
-                        new RuntimeException("Workflow not found"));
+                        new BusinessException(ErrorCode.WORKFLOW_NOT_FOUND));
         return workflowMapper.toResponse(workflow);
     }
 
@@ -66,7 +68,7 @@ public class WorkflowService {
         Workflow workflow = workflowRepository
                 .findByIdAndOrganizationId(workflowId, organizationId)
                 .orElseThrow(() ->
-                        new RuntimeException("Workflow not found"));
+                        new BusinessException(ErrorCode.WORKFLOW_NOT_FOUND));
         workflow.setName(request.name());
         workflow.setDescription(request.description());
         Workflow updated = workflowRepository.save(workflow);
@@ -79,8 +81,8 @@ public class WorkflowService {
         System.out.println("organizationId = " + organizationId);
         Workflow workflow = workflowRepository
                 .findByIdAndOrganizationId(workflowId, organizationId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Workflow not found"
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.WORKFLOW_NOT_FOUND
                 ));
         workflowRepository.delete(workflow);
     }
