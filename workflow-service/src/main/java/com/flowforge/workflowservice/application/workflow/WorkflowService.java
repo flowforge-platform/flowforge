@@ -8,6 +8,7 @@ import com.flowforge.workflowservice.presentation.dto.WorkflowResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -34,5 +35,24 @@ public class WorkflowService {
         Workflow saved = workflowRepository.save(workflow);
 
         return workflowMapper.toResponse(saved);
+    }
+
+    public List<WorkflowResponse> getAllWorkflows(UUID organizationId) {
+        return workflowRepository.findByOrganizationId(organizationId)
+                .stream()
+                .map(workflowMapper::toResponse)
+                .toList();
+    }
+
+    public WorkflowResponse getWorkflowById(
+            UUID workflowId,
+            UUID organizationId
+    ) {
+        Workflow workflow = workflowRepository
+                .findByIdAndOrganizationId(workflowId, organizationId)
+                .orElseThrow(() ->
+                        new RuntimeException("Workflow not found"));
+
+        return workflowMapper.toResponse(workflow);
     }
 }
