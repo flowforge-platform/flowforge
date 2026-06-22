@@ -10,6 +10,7 @@ import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowEdgeRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowNodeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WorkflowValidationService {
     private final WorkflowNodeRepository workflowNodeRepository;
     private final WorkflowEdgeRepository workflowEdgeRepository;
@@ -51,6 +53,7 @@ public class WorkflowValidationService {
                 .count();
 
         if(startCount==0){
+            log.warn("Workflow validation failed: missing START node");
             throw new BusinessException(ErrorCode.WORKFLOW_MISSING_START_NODE);
         }
 
@@ -67,6 +70,7 @@ public class WorkflowValidationService {
                 .count();
 
         if(endCount==0){
+            log.warn("Workflow validation failed: missing END node");
             throw new BusinessException(ErrorCode.WORKFLOW_MISSING_END_NODE);
         }
 
@@ -75,6 +79,7 @@ public class WorkflowValidationService {
         }
     }
 
+    // Reject workflows containing cycles
     private void validateCycle(List<WorkflowNode> nodes,List<WorkflowEdge> edges){
         // Convert workflow definition into graph representation
         Map<UUID,List<UUID>> graph = graphBuilder.buildGraph(nodes,edges);

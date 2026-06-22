@@ -1,10 +1,17 @@
 package com.flowforge.workflowservice.application.workflow.graph;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+/**
+ * Detects cycles in workflow graphs using DFS.
+ * A workflow must be a Directed Acyclic Graph (DAG)
+ * before it can be published or executed.
+ */
 @Component
+@Slf4j
 public class DagValidator {
     public boolean hasCycle(Map<UUID, List<UUID>> graph){
         Set<UUID> visited = new HashSet<>();
@@ -20,6 +27,7 @@ public class DagValidator {
 
     private boolean dfs(UUID node,Map<UUID,List<UUID>> graph,Set<UUID> visiting,Set<UUID> visited){
         if (visiting.contains(node)){
+            log.warn("Cycle detected in workflow graph at node {}", node);
             return  true;
         }
         if (visited.contains(node)){
