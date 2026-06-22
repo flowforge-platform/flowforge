@@ -1,4 +1,4 @@
-package com.flowforge.workflowservice.application.graph;
+package com.flowforge.workflowservice.application.workflow.graph;
 
 import org.springframework.stereotype.Component;
 
