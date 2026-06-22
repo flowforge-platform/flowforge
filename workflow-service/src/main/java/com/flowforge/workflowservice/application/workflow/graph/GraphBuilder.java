@@ -5,6 +5,10 @@ import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import org.springframework.stereotype.Component;
 import java.util.*;
 
+/**
+ * Builds an adjacency-list graph representation
+ * from workflow nodes and edges.
+ */
 @Component
 public class GraphBuilder {
     public Map<UUID, List<UUID>> buildGraph(
