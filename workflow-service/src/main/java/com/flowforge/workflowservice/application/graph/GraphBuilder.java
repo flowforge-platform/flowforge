@@ -19,9 +19,9 @@ public class GraphBuilder {
 
         for(WorkflowEdge edge : edges){
             UUID sourceId = edge.getSourceNode().getId();
-            UUID targetid = edge.getTargetNode().getId();
+            UUID targetId = edge.getTargetNode().getId();
 
-            graph.get(sourceId).add(targetid);
+            graph.get(sourceId).add(targetId);
         }
         return graph;
     }
