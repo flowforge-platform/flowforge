@@ -17,7 +17,8 @@ public enum ErrorCode {
     WORKFLOW_MULTIPLE_START_NODES(HttpStatus.BAD_REQUEST, "Workflow cannot contain multiple START nodes"),
     WORKFLOW_MISSING_END_NODE(HttpStatus.BAD_REQUEST, "Workflow must contain exactly one END node"),
     WORKFLOW_MULTIPLE_END_NODES(HttpStatus.BAD_REQUEST, "Workflow cannot contain multiple END nodes"),
-    WORKFLOW_CYCLE_DETECTED(HttpStatus.LOOP_DETECTED,"cycle detected in workflow");
+    WORKFLOW_CYCLE_DETECTED(HttpStatus.LOOP_DETECTED,"cycle detected in workflow"),
+    WORKFLOW_ALREADY_PUBLISHED(HttpStatus.CONFLICT,"workflow already published");
 
     private final HttpStatus status;
     private final String message;
