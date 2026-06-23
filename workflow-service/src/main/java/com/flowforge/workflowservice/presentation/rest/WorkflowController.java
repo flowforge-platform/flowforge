@@ -78,4 +78,13 @@ public class WorkflowController {
     ) {
         workflowService.deleteWorkflow(workflowId,organizationId);
     }
+
+    @PostMapping("/{workflowId}/publish")
+    @ResponseStatus(HttpStatus.OK)
+    public void publish(
+            @PathVariable UUID workflowId,
+            @RequestHeader("X-Organization-Id") UUID organizationId
+            ){
+        workflowService.publish(workflowId,organizationId);
+    }
 }
