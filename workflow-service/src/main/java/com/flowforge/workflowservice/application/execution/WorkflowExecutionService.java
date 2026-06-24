@@ -1,0 +1,131 @@
+package com.flowforge.workflowservice.application.execution;
+
+import com.flowforge.workflowservice.application.workflow.graph.GraphBuilder;
+import com.flowforge.workflowservice.application.workflow.graph.TopologicalSorter;
+import com.flowforge.workflowservice.common.exception.BusinessException;
+import com.flowforge.workflowservice.common.exception.ErrorCode;
+import com.flowforge.workflowservice.domain.execution.TaskExecution;
+import com.flowforge.workflowservice.domain.execution.TaskExecutionStatus;
+import com.flowforge.workflowservice.domain.execution.WorkflowExecution;
+import com.flowforge.workflowservice.domain.execution.WorkflowExecutionStatus;
+import com.flowforge.workflowservice.domain.node.WorkflowNode;
+import com.flowforge.workflowservice.domain.workflow.Workflow;
+import com.flowforge.workflowservice.domain.workflow.WorkflowStatus;
+import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
+import com.flowforge.workflowservice.infrastructure.persistence.WorkflowExecutionRepository;
+import com.flowforge.workflowservice.infrastructure.persistence.WorkflowRepository;
+import com.flowforge.workflowservice.presentation.dto.response.StartExecutionResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class WorkflowExecutionService {
+    private final WorkflowRepository workflowRepository;
+    private final WorkflowExecutionRepository workflowExecutionRepository;
+    private final TaskExecutionRepository taskExecutionRepository;
+    private final GraphBuilder graphBuilder;
+    private final TopologicalSorter topologicalSorter;
+
+    @Transactional
+    public StartExecutionResponse startExecution(UUID workflowId,UUID organizationId,UUID userId){
+        log.info(
+                "Starting execution for workflow {}",
+                workflowId
+        );
+
+        Workflow workflow = getPublishedWorkflow(
+                workflowId,
+                organizationId
+        );
+
+        WorkflowExecution workflowExecution = WorkflowExecution.builder()
+                .workflow(workflow)
+                .organizationId(organizationId)
+                .startedBy(userId)
+                .status(WorkflowExecutionStatus.RUNNING)
+                .startedAt(Instant.now())
+                .build();
+
+        workflowExecution = workflowExecutionRepository.save(workflowExecution);
+
+        Map<UUID, List<UUID>> graph =
+                graphBuilder.buildGraph(
+                        workflow.getNodes()
+                        ,workflow.getEdges());
+
+        // Generate node execution order from workflow DAG
+        List<UUID> executionOrder = topologicalSorter.sort(graph);
+
+        Map<UUID, WorkflowNode> nodeMap = workflow
+                .getNodes()
+                .stream()
+                .collect(Collectors.toMap(
+                        WorkflowNode::getId,
+                        node -> node
+                ));
+
+        List<TaskExecution> taskExecutions = new ArrayList<>();
+
+        // Create pending task executions in workflow execution order
+        for(UUID nodeId : executionOrder){
+
+            WorkflowNode node = nodeMap.get(nodeId);
+
+            taskExecutions.add(TaskExecution.builder()
+                    .workflowExecution(workflowExecution)
+                    .node(node)
+                    .status(TaskExecutionStatus.PENDING)
+                    .build());
+        }
+
+        // Persist all task executions together
+        taskExecutionRepository.saveAll(taskExecutions);
+
+        log.info(
+                "Workflow execution {} created with {} tasks",
+                workflowExecution.getId(),
+                executionOrder.size()
+        );
+
+        return new StartExecutionResponse(
+                workflowExecution.getId(),
+                workflowExecution.getStatus()
+        );
+    }
+
+
+    private Workflow getPublishedWorkflow(
+            UUID workflowId,
+            UUID organizationId
+    ) {
+        Workflow workflow = workflowRepository
+                .findByIdAndOrganizationId(
+                        workflowId,
+                        organizationId
+                )
+                .orElseThrow(() ->
+                        new BusinessException(
+                                ErrorCode.WORKFLOW_NOT_FOUND
+                        )
+                );
+
+        if (workflow.getStatus() != WorkflowStatus.PUBLISHED) {
+            throw new BusinessException(
+                    ErrorCode.WORKFLOW_NOT_PUBLISHED
+            );
+        }
+
+        return workflow;
+    }
+}
