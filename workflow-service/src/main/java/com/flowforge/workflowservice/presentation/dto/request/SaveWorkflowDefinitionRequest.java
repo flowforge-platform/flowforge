@@ -1,4 +1,4 @@
-package com.flowforge.workflowservice.presentation.dto;
+package com.flowforge.workflowservice.presentation.dto.request;
 
 import java.util.List;
 

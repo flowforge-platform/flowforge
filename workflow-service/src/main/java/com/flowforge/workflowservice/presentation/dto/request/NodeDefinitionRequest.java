@@ -1,7 +1,6 @@
-package com.flowforge.workflowservice.presentation.dto;
+package com.flowforge.workflowservice.presentation.dto.request;
 
 import com.flowforge.workflowservice.domain.node.NodeType;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Map;
 
