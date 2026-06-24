@@ -2,10 +2,9 @@ package com.flowforge.workflowservice.domain.node;
 import com.flowforge.workflowservice.domain.workflow.Workflow;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
+import com.fasterxml.jackson.databind.JsonNode;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -34,6 +33,12 @@ public class WorkflowNode {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "config_json")
-    private String configuration;
+    private JsonNode configuration;
+
+    @Column(name = "position_x")
+    private Double positionX;
+
+    @Column(name = "position_y")
+    private Double positionY;
 
 }

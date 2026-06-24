@@ -3,6 +3,7 @@ package com.flowforge.workflowservice.presentation.rest;
 
 import com.flowforge.workflowservice.application.workflow.WorkflowService;
 import com.flowforge.workflowservice.presentation.dto.CreateWorkflowRequest;
+import com.flowforge.workflowservice.presentation.dto.SaveWorkflowDefinitionRequest;
 import com.flowforge.workflowservice.presentation.dto.UpdateWorkflowRequest;
 import com.flowforge.workflowservice.presentation.dto.WorkflowResponse;
 import jakarta.validation.Valid;
@@ -86,5 +87,20 @@ public class WorkflowController {
             @RequestHeader("X-Organization-Id") UUID organizationId
             ){
         workflowService.publish(workflowId,organizationId);
+    }
+
+
+    @PutMapping("/{workflowId}/definition")
+    @ResponseStatus(HttpStatus.OK)
+    public void saveDefinition(
+            @PathVariable UUID workflowId,
+            @RequestHeader("X-Organization-Id") UUID organizationId,
+            @RequestBody SaveWorkflowDefinitionRequest request
+    ) {
+        workflowService.saveDefinition(
+                workflowId,
+                organizationId,
+                request
+        );
     }
 }
