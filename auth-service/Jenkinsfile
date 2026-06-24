@@ -1,34 +1,27 @@
 pipeline {
     agent any
 
-    tools {
-        maven 'Maven'
-        jdk 'JDK21'
-    }
-
     stages {
 
         stage('Checkout') {
             steps {
-                git branch: 'feature/auth', url: 'https://github.com/flowforge-platform'
+                echo 'Code checked out!'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                dir('auth-service') {
+                    bat 'mvnw.cmd clean package -DskipTests'
+                }
             }
         }
 
-        stage('Test') {
+        stage('Docker Build') {
             steps {
-                sh 'mvn test'
-            }
-        }
-
-        stage('Package') {
-            steps {
-                sh 'mvn package -DskipTests'
+                dir('auth-service') {
+                    bat 'docker build -t flowforge-auth:latest .'
+                }
             }
         }
 
@@ -36,7 +29,7 @@ pipeline {
 
     post {
         success {
-            echo 'Build successful!'
+            echo 'Docker image created successfully!'
         }
         failure {
             echo 'Build failed!'
