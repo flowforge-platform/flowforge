@@ -20,7 +20,8 @@ public enum ErrorCode {
     WORKFLOW_CYCLE_DETECTED(HttpStatus.LOOP_DETECTED,"cycle detected in workflow"),
     WORKFLOW_ALREADY_PUBLISHED(HttpStatus.CONFLICT,"workflow already published"),
     INVALID_WORKFLOW_DEFINITION(HttpStatus.BAD_REQUEST,"Workflow definition contains invalid node references"),
-    WORKFLOW_CANNOT_BE_MODIFIED(HttpStatus.CONFLICT,"Published workflows cannot be modified");
+    WORKFLOW_CANNOT_BE_MODIFIED(HttpStatus.CONFLICT,"Published workflows cannot be modified"),
+    WORKFLOW_NOT_PUBLISHED(HttpStatus.CONFLICT,"workflow must be published before execution");
 
     private final HttpStatus status;
     private final String message;

@@ -19,14 +19,21 @@ public class TaskExecution {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workflow_execution_id")
+    @JoinColumn(
+            name = "workflow_execution_id",
+            nullable = false
+    )
     private WorkflowExecution workflowExecution;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "node_id")
+    @JoinColumn(
+            name = "node_id",
+            nullable = false
+    )
     private WorkflowNode node;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TaskExecutionStatus status;
 
     private Instant startedAt;
