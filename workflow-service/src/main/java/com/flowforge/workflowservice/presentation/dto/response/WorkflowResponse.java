@@ -1,4 +1,4 @@
-package com.flowforge.workflowservice.presentation.dto;
+package com.flowforge.workflowservice.presentation.dto.response;
 
 import java.time.Instant;
 import java.util.UUID;

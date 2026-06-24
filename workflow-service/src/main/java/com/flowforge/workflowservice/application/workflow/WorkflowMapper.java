@@ -2,7 +2,7 @@ package com.flowforge.workflowservice.application.workflow;
 
 
 import com.flowforge.workflowservice.domain.workflow.Workflow;
-import com.flowforge.workflowservice.presentation.dto.WorkflowResponse;
+import com.flowforge.workflowservice.presentation.dto.response.WorkflowResponse;
 import org.springframework.stereotype.Component;
 
 @Component

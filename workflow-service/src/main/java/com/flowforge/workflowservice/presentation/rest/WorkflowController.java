@@ -2,14 +2,14 @@ package com.flowforge.workflowservice.presentation.rest;
 
 
 import com.flowforge.workflowservice.application.workflow.WorkflowService;
-import com.flowforge.workflowservice.presentation.dto.CreateWorkflowRequest;
-import com.flowforge.workflowservice.presentation.dto.SaveWorkflowDefinitionRequest;
-import com.flowforge.workflowservice.presentation.dto.UpdateWorkflowRequest;
-import com.flowforge.workflowservice.presentation.dto.WorkflowResponse;
+import com.flowforge.workflowservice.presentation.dto.request.CreateWorkflowRequest;
+import com.flowforge.workflowservice.presentation.dto.request.SaveWorkflowDefinitionRequest;
+import com.flowforge.workflowservice.presentation.dto.request.UpdateWorkflowRequest;
+import com.flowforge.workflowservice.presentation.dto.response.WorkflowDefinitionResponse;
+import com.flowforge.workflowservice.presentation.dto.response.WorkflowResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -103,4 +103,16 @@ public class WorkflowController {
                 request
         );
     }
+
+
+    @GetMapping("{workflowId}/definition")
+    @ResponseStatus(HttpStatus.OK)
+    public WorkflowDefinitionResponse getDefinition(
+          @PathVariable UUID workflowId,
+          @RequestHeader("X-Organization-Id") UUID organizationId
+    ){
+        return workflowService.getDefinition(workflowId,organizationId);
+    }
+
+
 }

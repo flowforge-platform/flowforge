@@ -12,7 +12,11 @@ import com.flowforge.workflowservice.domain.workflow.WorkflowStatus;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowEdgeRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowNodeRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowRepository;
-import com.flowforge.workflowservice.presentation.dto.*;
+import com.flowforge.workflowservice.presentation.dto.request.*;
+import com.flowforge.workflowservice.presentation.dto.response.EdgeDefinitionResponse;
+import com.flowforge.workflowservice.presentation.dto.response.NodeDefinitionResponse;
+import com.flowforge.workflowservice.presentation.dto.response.WorkflowDefinitionResponse;
+import com.flowforge.workflowservice.presentation.dto.response.WorkflowResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -156,12 +160,12 @@ public class WorkflowService {
             );
         }
 
-        workflowEdgeRepository.deleteByWorkflow_Id(workflowId);
 
+        // Replace the existing workflow graph with the latest definition
+        workflowEdgeRepository.deleteByWorkflow_Id(workflowId);
         workflowNodeRepository.deleteByWorkflow_Id(workflowId);
 
         Map<String,WorkflowNode> nodeMap = new HashMap<>();
-
 
         for( NodeDefinitionRequest nodeRequest : request.nodes()){
             JsonNode config =
@@ -176,6 +180,7 @@ public class WorkflowService {
                     .build();
 
             WorkflowNode savedNode = workflowNodeRepository.save(node);
+            // Maps frontend client ids to persisted node ids
             nodeMap.put(nodeRequest.clientId(), savedNode);
         }
 
@@ -200,5 +205,41 @@ public class WorkflowService {
                 "Workflow definition saved successfully for workflow {}",
                 workflowId
         );
+    }
+
+    @Transactional(readOnly = true)
+    public WorkflowDefinitionResponse getDefinition(UUID workflowId, UUID organizationId) {
+       workflowRepository.findByIdAndOrganizationId(workflowId,organizationId)
+                .orElseThrow(()->new BusinessException(ErrorCode.WORKFLOW_NOT_FOUND));
+
+        List<WorkflowNode> nodes = workflowNodeRepository.findByWorkflow_Id(workflowId);
+        List<WorkflowEdge> edges = workflowEdgeRepository.findByWorkflow_Id(workflowId);
+
+       List<NodeDefinitionResponse> nodeResponses = nodes
+               .stream()
+               .map(node -> new NodeDefinitionResponse(
+                node.getId(),
+                node.getNodeKey(),
+                node.getNodeType(),
+                node.getPositionX(),
+                node.getPositionY(),
+                node.getConfiguration()
+        ))
+               .toList();
+
+       List<EdgeDefinitionResponse> edgeResponses = edges
+               .stream()
+               .map(edge -> new EdgeDefinitionResponse(
+                       edge.getSourceNode().getId(),
+                       edge.getTargetNode().getId()
+               )
+       )
+               .toList();
+
+       return  new WorkflowDefinitionResponse(
+               nodeResponses,
+               edgeResponses
+       );
+
     }
 }
