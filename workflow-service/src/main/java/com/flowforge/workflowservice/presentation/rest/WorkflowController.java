@@ -1,6 +1,8 @@
 package com.flowforge.workflowservice.presentation.rest;
 
 
+import com.flowforge.workflowservice.application.workflow.WorkflowDefinitionService;
+import com.flowforge.workflowservice.application.workflow.WorkflowPublishService;
 import com.flowforge.workflowservice.application.workflow.WorkflowService;
 import com.flowforge.workflowservice.presentation.dto.request.CreateWorkflowRequest;
 import com.flowforge.workflowservice.presentation.dto.request.SaveWorkflowDefinitionRequest;
@@ -21,6 +23,8 @@ import java.util.UUID;
 public class WorkflowController {
 
     private final WorkflowService workflowService;
+    private final WorkflowPublishService workflowPublishService;
+    private final WorkflowDefinitionService workflowDefinitionService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -86,7 +90,7 @@ public class WorkflowController {
             @PathVariable UUID workflowId,
             @RequestHeader("X-Organization-Id") UUID organizationId
             ){
-        workflowService.publish(workflowId,organizationId);
+        workflowPublishService.publish(workflowId,organizationId);
     }
 
 
@@ -97,7 +101,7 @@ public class WorkflowController {
             @RequestHeader("X-Organization-Id") UUID organizationId,
             @RequestBody SaveWorkflowDefinitionRequest request
     ) {
-        workflowService.saveDefinition(
+        workflowDefinitionService.saveDefinition(
                 workflowId,
                 organizationId,
                 request
@@ -111,8 +115,7 @@ public class WorkflowController {
           @PathVariable UUID workflowId,
           @RequestHeader("X-Organization-Id") UUID organizationId
     ){
-        return workflowService.getDefinition(workflowId,organizationId);
+        return workflowDefinitionService.getDefinition(workflowId,organizationId);
     }
-
 
 }
