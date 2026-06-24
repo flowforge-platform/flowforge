@@ -9,4 +9,5 @@ import java.util.UUID;
 @Repository
 public interface WorkflowEdgeRepository extends JpaRepository<WorkflowEdge, UUID> {
    List<WorkflowEdge> findByWorkflow_Id(UUID workflowId);
+   void deleteByWorkflow_Id(UUID workflowId);
 }
