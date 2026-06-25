@@ -1,6 +1,6 @@
 
 server:
-  port: 8081
+  port: 8082
 
 spring:
   application:
@@ -47,7 +47,15 @@ app:
     secret: ${JWT_SECRET:dGhpcy1pcy1hLXNlY3JldC1rZXktZm9yLWZsb3dmb3JnZS1hdXRoLXNlcnZpY2U=}
 
 
-
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
 
 
 
