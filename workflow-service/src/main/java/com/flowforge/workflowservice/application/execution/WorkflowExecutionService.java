@@ -1,5 +1,6 @@
 package com.flowforge.workflowservice.application.execution;
 
+import com.flowforge.workflowservice.application.execution.port.EventPublisher;
 import com.flowforge.workflowservice.application.workflow.graph.GraphBuilder;
 import com.flowforge.workflowservice.application.workflow.graph.TopologicalSorter;
 import com.flowforge.workflowservice.common.exception.BusinessException;
@@ -11,6 +12,7 @@ import com.flowforge.workflowservice.domain.execution.WorkflowExecutionStatus;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.domain.workflow.Workflow;
 import com.flowforge.workflowservice.domain.workflow.WorkflowStatus;
+import com.flowforge.workflowservice.application.execution.event.TaskCreatedEvent;
 import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowExecutionRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowRepository;
@@ -36,6 +38,7 @@ public class WorkflowExecutionService {
     private final TaskExecutionRepository taskExecutionRepository;
     private final GraphBuilder graphBuilder;
     private final TopologicalSorter topologicalSorter;
+    private final EventPublisher eventPublisher;
 
     @Transactional
     public StartExecutionResponse startExecution(UUID workflowId,UUID organizationId,UUID userId){
@@ -91,6 +94,22 @@ public class WorkflowExecutionService {
 
         // Persist all task executions together
         taskExecutionRepository.saveAll(taskExecutions);
+
+        log.info(
+                "Publishing {} task-created events",
+                taskExecutions.size()
+        );
+
+        for(TaskExecution taskExecution : taskExecutions){
+           eventPublisher.publishTaskCreated(
+                   new TaskCreatedEvent(
+                           workflowExecution.getId(),
+                           taskExecution.getId(),
+                           taskExecution.getNode().getId(),
+                           taskExecution.getNode().getNodeType().name()
+                   )
+           );
+        }
 
         log.info(
                 "Workflow execution {} created with {} tasks",
