@@ -1,6 +1,5 @@
 package com.flowforge.auth_service.security;
 
-import ch.qos.logback.core.util.StringUtil;
 import com.flowforge.auth_service.user.service.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
