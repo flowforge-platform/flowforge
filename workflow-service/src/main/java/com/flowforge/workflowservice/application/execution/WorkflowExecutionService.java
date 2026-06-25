@@ -16,7 +16,9 @@ import com.flowforge.workflowservice.application.execution.event.TaskCreatedEven
 import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowExecutionRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowRepository;
+import com.flowforge.workflowservice.presentation.dto.response.GetExecutionResponse;
 import com.flowforge.workflowservice.presentation.dto.response.StartExecutionResponse;
+import com.flowforge.workflowservice.presentation.dto.response.TaskExecutionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -146,5 +148,91 @@ public class WorkflowExecutionService {
         }
 
         return workflow;
+    }
+
+
+    @Transactional(readOnly = true)
+    public GetExecutionResponse getExecution(
+            UUID executionId,
+            UUID organizationId
+    ){
+        log.info(
+                "Fetching workflow execution {}",
+                executionId
+        );
+    WorkflowExecution execution = workflowExecutionRepository
+            .findByIdAndOrganizationId(
+                    executionId,
+                    organizationId)
+            .orElseThrow(()->
+                    new BusinessException(
+                            ErrorCode.WORKFLOW_EXECUTION_NOT_FOUND
+                    )
+            );
+
+    return  new GetExecutionResponse(
+            execution.getId(),
+            execution.getWorkflow().getId(),
+            execution.getStatus(),
+            execution.getStartedAt(),
+            execution.getCompletedAt()
+    );
+    }
+
+
+    @Transactional(readOnly = true)
+    public List<TaskExecutionResponse> getExecutionTasks(
+            UUID executionId,
+            UUID organizationId
+    ) {
+        log.info(
+                "Fetching tasks for workflow execution {}",
+                executionId
+        );
+
+        WorkflowExecution execution = workflowExecutionRepository
+                .findByIdAndOrganizationId(
+                        executionId,
+                        organizationId
+                )
+                .orElseThrow(() ->
+                        new BusinessException(
+                                ErrorCode.WORKFLOW_EXECUTION_NOT_FOUND
+                        )
+                );
+
+        return taskExecutionRepository
+                .findByWorkflowExecutionId(execution.getId())
+                .stream()
+                .map(taskExecution -> new TaskExecutionResponse(
+                        taskExecution.getId(),
+                        taskExecution.getNode().getId(),
+                        taskExecution.getNode().getNodeType().name(),
+                        taskExecution.getStatus(),
+                        taskExecution.getStartedAt(),
+                        taskExecution.getCompletedAt(),
+                        taskExecution.getErrorMessage()
+                ))
+                .toList();
+    }
+
+    public List<GetExecutionResponse> getExecutions(UUID organizationId) {
+        log.info(
+                "Fetching workflow executions for organization {}",
+                organizationId
+        );
+
+        return workflowExecutionRepository
+                .findAllByOrganizationIdOrderByStartedAtDesc(organizationId)
+                .stream()
+                .map(workflowExecution ->
+                        new GetExecutionResponse(
+                                workflowExecution.getId(),
+                                workflowExecution.getWorkflow().getId(),
+                                workflowExecution.getStatus(),
+                                workflowExecution.getStartedAt(),
+                                workflowExecution.getCompletedAt()
+                        ) )
+                .toList();
     }
 }
