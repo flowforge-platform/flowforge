@@ -59,6 +59,10 @@ services:
       - discovery-service
     networks:
       - default
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    volumes:
+      - ./database:/app/database
 
   kafka:
     image: apache/kafka:latest

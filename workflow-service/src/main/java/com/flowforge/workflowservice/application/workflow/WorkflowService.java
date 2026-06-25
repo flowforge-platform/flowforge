@@ -20,7 +20,7 @@ public class WorkflowService {
     private final WorkflowRepository workflowRepository;
     private final WorkflowMapper workflowMapper;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public WorkflowResponse createWorkflow(
             CreateWorkflowRequest request,
             UUID userId,
