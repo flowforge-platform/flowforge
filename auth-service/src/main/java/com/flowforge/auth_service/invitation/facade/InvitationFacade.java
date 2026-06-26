@@ -12,7 +12,7 @@ import com.flowforge.auth_service.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
+import com.flowforge.auth_service.common.exception.*;
 
 @Component
 @RequiredArgsConstructor
@@ -24,8 +24,7 @@ public class InvitationFacade {
 
     public void createInvitation(CreateInvitationRequest request, UserPrincipal userPrincipal){
         Organization org=organizationService.findById(userPrincipal.getOrganizationId())
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Organization not found"));
+                .orElseThrow(()->new OrganizationNotFoundException("Organization not found"));
 
         Invitation invitation=Invitation.builder()
                 .email(request.email())
@@ -38,10 +37,10 @@ public class InvitationFacade {
 
     public InvitationInfoResponse validateToken(String token){
         Invitation invitation=invitationService.findByToken(token)
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Invalid token"));
+                .orElseThrow(()->new InvalidInviteTokenException("Invalid token"));
 
         if (invitation.getStatus()!= InvitationStatus.PENDING){
-            throw new ResponseStatusException(HttpStatus.GONE,"Token expired");
+            throw new InvitationExpiredException("Token expired");
         }
         return new InvitationInfoResponse(invitation.getOrganization().getName(),invitation.getEmail(),invitation.getRole());
     }

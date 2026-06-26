@@ -1,14 +1,13 @@
 package com.flowforge.auth_service.common.exception;
 
 import com.flowforge.auth_service.common.dto.ApiResponse;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,10 +15,54 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(ResponseStatusException.class)
-    public ApiResponse<Void> handleResponseStatusException(ResponseStatusException ex, HttpServletResponse response) {
-        response.setStatus(ex.getStatusCode().value());
-        return ApiResponse.error(ex.getReason());
+    @ExceptionHandler(OrganizationAlreadyExistsException.class)
+    public ApiResponse<Void> handleOrganizationAlreadyExists(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ApiResponse<Void> handleEmailAlreadyExists(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidInviteTokenException.class)
+    public ApiResponse<Void> handleInvalidInviteToken(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailMismatchException.class)
+    public ApiResponse<Void> handleEmailMismatch(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ApiResponse<Void> handleInvalidCredentials(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    public ApiResponse<Void> handleInvalidRefreshToken(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ApiResponse<Void> handleUserNotFound(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvitationAlreadyUsedException.class)
+    public ApiResponse<Void> handleInvitationAlreadyUsed(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(InvitationExpiredException.class)
+    public ApiResponse<Void> handleInvitationExpired(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
+
+    @ExceptionHandler(OrganizationNotFoundException.class)
+    public ApiResponse<Void> handleOrganizationNotFound(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
