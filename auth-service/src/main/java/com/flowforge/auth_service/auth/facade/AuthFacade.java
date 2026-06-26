@@ -18,7 +18,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.server.ResponseStatusException;
+import com.flowforge.auth_service.common.exception.*;
 
 import java.time.Instant;
 
@@ -33,10 +33,10 @@ public class AuthFacade {
     @Transactional
     public AuthResponse registerOrganization(RegisterOrgRequest request){
         if (organizationService.existsByName(request.organizationName())){
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Organization name already register");
+            throw new OrganizationAlreadyExistsException("Organization name already register");
         }
         if (userService.existsByEmail(request.email())){
-            throw new ResponseStatusException(HttpStatus.CONFLICT,"Email already registered");
+            throw new EmailAlreadyExistsException("Email already registered");
         }
         Organization org=new Organization();
         org.setName(request.organizationName());
@@ -56,15 +56,15 @@ public class AuthFacade {
     @Transactional
     public AuthResponse registerWithInvite(RegisterWithInviteRequest request){
         Invitation invitation=invitationService.findByToken(request.token())
-                .orElseThrow(()->new ResponseStatusException(HttpStatus.NOT_FOUND,"Invalid invite token"));
+                .orElseThrow(()->new InvalidInviteTokenException("Invalid invite token"));
          validateInvitationUsable(invitation);
 
          if (!request.email().equalsIgnoreCase(invitation.getEmail())) {
-             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email does not match invitation email");
+             throw new EmailMismatchException("Email does not match invitation email");
          }
 
          if (userService.existsByEmail(invitation.getEmail())){
-             throw new ResponseStatusException(HttpStatus.CONFLICT,"Email already registered");
+             throw new EmailAlreadyExistsException("Email already registered");
          }
 
          User user=User.builder()
@@ -82,9 +82,9 @@ public class AuthFacade {
 
     public AuthResponse login(LoginRequest request) {
         User user = userService.findByEmail(request.email())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid email or password"));
         if (!userService.verifyPassword(request.password(), user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+            throw new InvalidCredentialsException("Invalid email or password");
         }
         return buildAuthResponse(user, "Login successful");
     }
@@ -92,11 +92,11 @@ public class AuthFacade {
     public AuthResponse refreshToken(RefreshTokenRequest request) {
         String token = request.refreshToken();
         if (!jwtService.isValid(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired refresh token");
+            throw new InvalidRefreshTokenException("Invalid or expired refresh token");
         }
         String email = jwtService.extractClaims(token).getSubject();
         User user = userService.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return buildAuthResponse(user, "Token refreshed");
     }
 
@@ -109,11 +109,11 @@ public class AuthFacade {
 
     private void validateInvitationUsable(Invitation invitation){
         if (invitation.getStatus()== InvitationStatus.ACCEPTED){
-            throw new ResponseStatusException(HttpStatus.GONE, "Invitation already used");
+            throw new InvitationAlreadyUsedException("Invitation already used");
         }
         if (invitation.getStatus() == InvitationStatus.EXPIRED
                 || invitation.getExpiresAt().isBefore(Instant.now())) {
-            throw new ResponseStatusException(HttpStatus.GONE, "Invitation has expired");
+            throw new InvitationExpiredException("Invitation has expired");
         }
     }
 }
