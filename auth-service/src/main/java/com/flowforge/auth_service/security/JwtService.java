@@ -1,6 +1,6 @@
 package com.flowforge.auth_service.security;
 
-import com.flowforge.auth_service.user.model.User;
+import com.flowforge.auth_service.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
