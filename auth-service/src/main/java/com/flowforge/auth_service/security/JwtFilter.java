@@ -1,6 +1,6 @@
 package com.flowforge.auth_service.security;
 
-import com.flowforge.auth_service.user.service.UserService;
+import com.flowforge.auth_service.service.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

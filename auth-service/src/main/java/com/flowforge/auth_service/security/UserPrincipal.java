@@ -1,7 +1,7 @@
 package com.flowforge.auth_service.security;
 
-import com.flowforge.auth_service.common.enums.Role;
-import com.flowforge.auth_service.user.model.User;
+import com.flowforge.auth_service.enums.Role;
+import com.flowforge.auth_service.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

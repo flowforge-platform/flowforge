@@ -59,5 +59,14 @@ eureka:
 
 
 
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
 
+logging:
+  level:
+    org.springdoc: DEBUG
+    org.springframework.web: DEBUG
 

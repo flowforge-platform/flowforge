@@ -14,6 +14,13 @@ spring:
           filters:
             - JwtAuthFilter
 
+        - id: workflow-service
+          uri: lb://workflow-service
+          predicates:
+            - Path=/api/v1/executions/**,/api/v1/workflows/**
+          filters:
+            - JwtAuthFilter
+
 eureka:
   client:
     service-url:
