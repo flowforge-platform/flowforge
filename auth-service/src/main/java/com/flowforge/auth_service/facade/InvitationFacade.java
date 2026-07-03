@@ -31,7 +31,7 @@ public class InvitationFacade {
 
         Invitation invitation = invitationMapper.toEntity(request, org);
         Invitation saved = invitationService.save(invitation);
-
+        //try
         mailService.sendInvitationEmail(saved.getEmail(), saved.getToken(), org.getName());
     }
 
