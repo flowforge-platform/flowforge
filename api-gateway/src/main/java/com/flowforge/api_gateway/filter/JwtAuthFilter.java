@@ -79,7 +79,7 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
                         .mutate()
                         .header("X-User-Email", email)
                         .header("X-User-Id", userId)
-                        .header("X-Org-Id", orgId)
+                        .header("X-Organization-Id", orgId)
                         .header("X-User-Role", role)
                         .build();
 
