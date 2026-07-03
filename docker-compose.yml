@@ -64,6 +64,18 @@ services:
 #    volumes:
 #      - ./database:/app/database
 
+  worker-service:
+    image: aswinrj/worker-service
+    container_name: worker-service
+    restart: always
+    depends_on:
+      - discovery-service
+      - kafka
+      - db
+      - mailpit
+    ports:
+      - "8084:8084"
+
   kafka:
     image: apache/kafka:latest
     container_name: flowforge-kafka
