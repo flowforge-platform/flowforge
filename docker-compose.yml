@@ -49,20 +49,20 @@ services:
       - "1025:1025"
       - "8025:8025"
 
-  workflow-service:
-    image: anzyl/workflow-service:v1
-    container_name: workflow-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - db
-      - discovery-service
-    networks:
-      - default
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    volumes:
-      - ./database:/app/database
+#  workflow-service:
+#    image: anzyl/workflow-service:v1
+#    container_name: workflow-service
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - db
+#      - discovery-service
+#    networks:
+#      - default
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#    volumes:
+#      - ./database:/app/database
 
   kafka:
     image: apache/kafka:latest
@@ -70,16 +70,20 @@ services:
     restart: always
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
       KAFKA_CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
-    volumes:
-      - kafka_data:/var/lib/kafka/data
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
 volumes:
   postgres_data:
