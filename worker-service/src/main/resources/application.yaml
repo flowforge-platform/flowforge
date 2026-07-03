@@ -7,7 +7,7 @@ spring:
     name: worker-service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/flowforge
+    url: jdbc:postgresql://flowforge-postgres:5432/flowforge
     username: postgres
     password: postgres
 
@@ -21,7 +21,7 @@ spring:
     locations: classpath:db/migration
 
   kafka:
-    bootstrap-servers: localhost:29092
+    bootstrap-servers: flowforge-kafka:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -36,7 +36,7 @@ spring:
   mail:
     host: localhost
     port: 1025
-#eureka:
-#  client:
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka/
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka/
