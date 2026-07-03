@@ -35,6 +35,7 @@ public class MailService {
             mailSender.send(message);
             log.info("Invitation email sent successfully to {}", toEmail);
         } catch (Exception e) {
+            //throw
             log.error("Failed to send invitation email to {}: {}. Dev invitation token: {}", toEmail, e.getMessage(), token);
         }
     }

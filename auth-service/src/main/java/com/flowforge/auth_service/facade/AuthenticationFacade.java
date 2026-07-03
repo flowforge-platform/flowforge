@@ -8,6 +8,7 @@ import com.flowforge.auth_service.dto.RegisterWithInviteRequest;
 import com.flowforge.auth_service.enums.InvitationStatus;
 import com.flowforge.auth_service.exception.*;
 import com.flowforge.auth_service.model.Invitation;
+import com.flowforge.auth_service.service.AuthenticationService;
 import com.flowforge.auth_service.service.InvitationService;
 import com.flowforge.auth_service.model.Organization;
 import com.flowforge.auth_service.service.OrganizationService;
@@ -29,10 +30,8 @@ public class AuthenticationFacade {
     private final OrganizationService organizationService;
     private final InvitationService invitationService;
     private final JwtService jwtService;
-    private final OrganizationMapper organizationMapper;
-    private final UserMapper userMapper;
+    private final AuthenticationService authenticationService;
 
-    @Transactional
     public AuthResponse registerOrganization(RegisterOrgRequest request){
         if (organizationService.existsByName(request.getOrganizationName())){
             throw new OrganizationAlreadyExistsException("Organization name already register");
@@ -40,16 +39,9 @@ public class AuthenticationFacade {
         if (userService.existsByEmail(request.getEmail())){
             throw new EmailAlreadyExistsException("Email already registered");
         }
-        Organization org = organizationMapper.toEntity(request);
-        Organization savedOrg=organizationService.save(org);
-
-        User user = userMapper.toManagerEntity(request, savedOrg, userService.encodePassword(request.getPassword()));
-        userService.save(user);
-
-        return buildAuthResponse(user,"Organization created");
+        return buildAuthResponse(authenticationService.registerOrganization(request),"Organization created");
     }
 
-    @Transactional
     public AuthResponse registerWithInvite(RegisterWithInviteRequest request){
         Invitation invitation=invitationService.findByToken(request.getToken())
                 .orElseThrow(()->new InvalidInviteTokenException("Invalid invite token"));
@@ -62,12 +54,7 @@ public class AuthenticationFacade {
          if (userService.existsByEmail(invitation.getEmail())){
              throw new EmailAlreadyExistsException("Email already registered");
          }
-
-         User user = userMapper.toEntity(request, invitation, userService.encodePassword(request.getPassword()));
-         userService.save(user);
-
-         invitationService.markAccepted(invitation);
-         return buildAuthResponse(user,"Register completed");
+         return buildAuthResponse(authenticationService.registerWithInvite(request,invitation),"Register completed");
     }
 
     public AuthResponse login(LoginRequest request) {
