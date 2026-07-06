@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class TaskRepositoryAdapter implements TaskRepositoryPort {
     }
 
     @Override
-    public Optional<WorkerTask> findById(String id) {
+    public Optional<WorkerTask> findById(UUID id) {
         return springDataWorkerTaskRepository.findById(id)
                 .map(WorkTaskMapper::toDomain);
     }

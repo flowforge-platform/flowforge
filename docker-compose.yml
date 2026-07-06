@@ -49,20 +49,20 @@ services:
       - "1025:1025"
       - "8025:8025"
 
-  workflow-service:
-    image: anzyl/workflow-service:v1
-    container_name: workflow-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - db
-      - discovery-service
-    networks:
-      - default
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    volumes:
-      - ./database:/app/database
+#  workflow-service:
+#    image: anzyl/workflow-service:v1
+#    container_name: workflow-service
+#    ports:
+#      - "8082:8082"
+#    depends_on:
+#      - db
+#      - discovery-service
+#    networks:
+#      - default
+#    environment:
+#      SPRING_PROFILES_ACTIVE: docker
+#    volumes:
+#      - ./database:/app/database
 
   worker-service:
     image: aswinrj/worker-service
