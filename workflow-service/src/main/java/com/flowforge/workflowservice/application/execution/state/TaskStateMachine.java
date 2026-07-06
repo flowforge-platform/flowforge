@@ -1,5 +1,7 @@
 package com.flowforge.workflowservice.application.execution.state;
 
+import com.flowforge.workflowservice.common.exception.BusinessException;
+import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.TaskExecution;
 import com.flowforge.workflowservice.domain.execution.TaskExecutionStatus;
 import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
@@ -15,12 +17,10 @@ import java.time.Instant;
 public class TaskStateMachine {
     private final TaskExecutionRepository taskExecutionRepository;
 
-    private void startTaskExecution(TaskExecution task) {
+    public void startTaskExecution(TaskExecution task) {
 
         if (task.getStatus() != TaskExecutionStatus.PENDING) {
-            throw new IllegalStateException(
-                    "Task can only start from PENDING state"
-            );
+            throw new BusinessException(ErrorCode.INVALID_TASK_STATE_TRANSITION);
         }
         task.setStatus(TaskExecutionStatus.RUNNING);
         task.setStartedAt(Instant.now());
@@ -28,12 +28,10 @@ public class TaskStateMachine {
         taskExecutionRepository.save(task);
     }
 
-    private void completeTaskExecution(TaskExecution task) {
+    public void completeTaskExecution(TaskExecution task) {
 
         if (task.getStatus() != TaskExecutionStatus.RUNNING) {
-            throw new IllegalStateException(
-                    "Task can only complete from RUNNING state"
-            );
+            throw new BusinessException(ErrorCode.INVALID_TASK_STATE_TRANSITION);
         }
         task.setStatus(TaskExecutionStatus.SUCCESS);
         task.setCompletedAt(Instant.now());
@@ -41,15 +39,13 @@ public class TaskStateMachine {
         taskExecutionRepository.save(task);
     }
 
-    private void failTaskExecution(
+    public void failTaskExecution(
             TaskExecution task,
             String error
     ) {
 
         if (task.getStatus() != TaskExecutionStatus.RUNNING) {
-            throw new IllegalStateException(
-                    "Task can only fail from RUNNING state"
-            );
+            throw new BusinessException(ErrorCode.INVALID_TASK_STATE_TRANSITION);
         }
         task.setStatus(TaskExecutionStatus.FAILED);
         task.setCompletedAt(Instant.now());
