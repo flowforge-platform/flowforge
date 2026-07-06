@@ -1,6 +1,8 @@
 package com.flowforge.workflowservice.application.execution;
 
 import com.flowforge.workflowservice.application.execution.port.EventPublisher;
+import com.flowforge.workflowservice.application.execution.state.TaskStateMachine;
+import com.flowforge.workflowservice.application.execution.state.WorkflowStateMachine;
 import com.flowforge.workflowservice.application.workflow.graph.GraphBuilder;
 import com.flowforge.workflowservice.application.workflow.graph.TopologicalSorter;
 import com.flowforge.workflowservice.common.exception.BusinessException;
@@ -41,6 +43,8 @@ public class WorkflowExecutionService {
     private final GraphBuilder graphBuilder;
     private final TopologicalSorter topologicalSorter;
     private final EventPublisher eventPublisher;
+    private final WorkflowStateMachine workflowStateMachine;
+    private final TaskStateMachine taskStateMachine;
 
     @Transactional
     public StartExecutionResponse startExecution(UUID workflowId,UUID organizationId,UUID userId){
@@ -62,6 +66,8 @@ public class WorkflowExecutionService {
                 .build();
 
         workflowExecution = workflowExecutionRepository.save(workflowExecution);
+
+        workflowStateMachine.startWorkflowExecution(workflowExecution);
 
         Map<UUID, List<UUID>> graph =
                 graphBuilder.buildGraph(
@@ -102,12 +108,16 @@ public class WorkflowExecutionService {
         );
 
         for(TaskExecution taskExecution : taskExecutions){
+
+            taskStateMachine.startTaskExecution(taskExecution);
+
            eventPublisher.publishTaskCreated(
                    new TaskCreatedEvent(
                            workflowExecution.getId(),
                            taskExecution.getId(),
                            taskExecution.getNode().getId(),
-                           taskExecution.getNode().getNodeType().name()
+                           taskExecution.getNode().getNodeType().name(),
+                           taskExecution.getNode().getConfiguration()
                    )
            );
         }

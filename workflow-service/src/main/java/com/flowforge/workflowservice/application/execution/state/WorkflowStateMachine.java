@@ -1,5 +1,7 @@
 package com.flowforge.workflowservice.application.execution.state;
 
+import com.flowforge.workflowservice.common.exception.BusinessException;
+import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.WorkflowExecution;
 import com.flowforge.workflowservice.domain.execution.WorkflowExecutionStatus;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowExecutionRepository;
@@ -15,11 +17,9 @@ import java.time.Instant;
 public class WorkflowStateMachine {
     private final WorkflowExecutionRepository workflowExecutionRepository;
 
-    private void startWorkflowExecution(WorkflowExecution execution) {
+    public void startWorkflowExecution(WorkflowExecution execution) {
         if (execution.getStatus() != WorkflowExecutionStatus.PENDING) {
-            throw new IllegalStateException(
-                    "Workflow execution can only start from PENDING state"
-            );
+            throw new BusinessException(ErrorCode.INVALID_WORKFLOW_STATE_TRANSITION);
         }
         execution.setStatus(WorkflowExecutionStatus.RUNNING);
         execution.setStartedAt(Instant.now());
@@ -27,12 +27,10 @@ public class WorkflowStateMachine {
         workflowExecutionRepository.save(execution);
     }
 
-    private void completeWorkflowExecution(WorkflowExecution execution) {
+    public void completeWorkflowExecution(WorkflowExecution execution) {
 
         if (execution.getStatus() != WorkflowExecutionStatus.RUNNING) {
-            throw new IllegalStateException(
-                    "Workflow execution can only complete from RUNNING state"
-            );
+            throw new BusinessException(ErrorCode.INVALID_WORKFLOW_STATE_TRANSITION);
         }
         execution.setStatus(WorkflowExecutionStatus.COMPLETED);
         execution.setCompletedAt(Instant.now());
@@ -40,15 +38,13 @@ public class WorkflowStateMachine {
         workflowExecutionRepository.save(execution);
     }
 
-    private void failWorkflowExecution(
+    public void failWorkflowExecution(
             WorkflowExecution execution,
             String reason
     ) {
 
         if (execution.getStatus() != WorkflowExecutionStatus.RUNNING) {
-            throw new IllegalStateException(
-                    "Workflow execution can only fail from RUNNING state"
-            );
+            throw new BusinessException(ErrorCode.INVALID_WORKFLOW_STATE_TRANSITION);
         }
         execution.setStatus(WorkflowExecutionStatus.FAILED);
         execution.setCompletedAt(Instant.now());
