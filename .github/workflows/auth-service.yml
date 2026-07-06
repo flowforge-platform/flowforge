@@ -44,7 +44,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: YOUR_DOCKER_USERNAME/flowforge-auth
+          images: aswinrj/auth-service
           tags: |
             type=raw,value=latest
 
