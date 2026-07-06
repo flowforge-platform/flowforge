@@ -29,9 +29,9 @@ public class TaskCreatedConsumer {
                 : objectMapper.writeValueAsString(event.configuration());
 
         WorkerTask task = new WorkerTask(
-                event.taskExecutionId().toString(),
-                event.workflowExecutionId().toString(),
-                event.nodeId().toString(),
+                event.taskExecutionId(),
+                event.workflowExecutionId(),
+                event.nodeId(),
                 event.nodeType(),
                 payload
         );

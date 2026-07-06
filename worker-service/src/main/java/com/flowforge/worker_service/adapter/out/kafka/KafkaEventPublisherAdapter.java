@@ -29,6 +29,6 @@ public class KafkaEventPublisherAdapter implements EventPublisherPort {
         );
 
         log.info("Publishing task-completed event for task {}", task.getId());
-        kafkaTemplate.send(KafkaTopics.TASK_COMPLETED, task.getId(), event);
+        kafkaTemplate.send(KafkaTopics.TASK_COMPLETED, task.getId().toString(), event);
     }
 }
