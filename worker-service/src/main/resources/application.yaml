@@ -34,7 +34,7 @@ spring:
         spring.json.trusted.packages: "*"
 
   mail:
-    host: localhost
+    host: mailpit
     port: 1025
 eureka:
   client:
