@@ -58,8 +58,7 @@ public class WorkflowExecutionService {
                 .workflow(workflow)
                 .organizationId(organizationId)
                 .startedBy(userId)
-                .status(WorkflowExecutionStatus.RUNNING)
-                .startedAt(Instant.now())
+                .status(WorkflowExecutionStatus.PENDING)
                 .build();
 
         workflowExecution = workflowExecutionRepository.save(workflowExecution);
