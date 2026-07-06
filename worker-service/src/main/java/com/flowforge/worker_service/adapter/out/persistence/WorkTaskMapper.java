@@ -2,9 +2,7 @@ package com.flowforge.worker_service.adapter.out.persistence;
 
 
 import com.flowforge.worker_service.domain.model.WorkerTask;
-import org.springframework.stereotype.Component;
 
-@Component
 public class WorkTaskMapper {
     private WorkTaskMapper(){};
 

@@ -2,6 +2,7 @@ package com.flowforge.worker_service.adapter.out.persistence;
 
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.flowforge.worker_service.domain.enums.TaskStatus;
 
@@ -24,13 +25,13 @@ public class WorkerTaskEntity {
 
 
     @Id
-    private String id;
+    private UUID id;
 
     @Column(name = "workflow_execution_id")
-    private String workflowExecutionId;
+    private UUID workflowExecutionId;
 
     @Column(name = "node_id")
-    private String nodeId;
+    private UUID nodeId;
 
     @Column(nullable = false)
     private String type;
