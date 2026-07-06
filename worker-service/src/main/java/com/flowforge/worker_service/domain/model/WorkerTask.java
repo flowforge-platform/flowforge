@@ -6,14 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class WorkerTask {
-    private String id;
-    private String workflowExecutionId;
-    private String nodeId;
+    private UUID id;
+    private UUID workflowExecutionId;
+    private UUID nodeId;
     private String type;
     private String payload;
     private TaskStatus status;
@@ -24,7 +25,7 @@ public class WorkerTask {
 
 
 
-    public WorkerTask(String id, String workflowExecutionId, String nodeId, String type, String payload) {
+    public WorkerTask(UUID id, UUID workflowExecutionId, UUID nodeId, String type, String payload) {
         this.id = id;
         this.workflowExecutionId = workflowExecutionId;
         this.nodeId = nodeId;
@@ -41,7 +42,7 @@ public class WorkerTask {
     }
 
     public void markDone(String result) {
-        this.status = TaskStatus.DONE;
+        this.status = TaskStatus.SUCCESS;
         this.result = result;
         this.updatedAt = LocalDateTime.now();
     }
