@@ -9,7 +9,7 @@ export interface BaseNodeData {
   label: string;
 }
 
-export interface StartNodeData extends BaseNodeData {}
+export type StartNodeData = BaseNodeData;
 
 export interface HttpRequestNodeData extends BaseNodeData {
   method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
