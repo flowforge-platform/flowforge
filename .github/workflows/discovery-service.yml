@@ -1,4 +1,4 @@
-name: Auth Service CI
+name: Discovery Service CI
 
 on:
   push:
@@ -13,12 +13,12 @@ permissions:
 
 jobs:
   build-and-push:
-    name: Build and Push Auth Service
+    name: Build and Push Discovery Service
     runs-on: ubuntu-latest
 
     defaults:
       run:
-        working-directory: auth-service
+        working-directory: discovery-service
 
     steps:
       - name: Checkout Repository

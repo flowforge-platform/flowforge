@@ -1,9 +1,9 @@
-name: Auth Service CI
+name: Worker Service CI
 
 on:
   push:
     branches:
-      - feature/discovery-service
+      - feature/worker-service
     paths:
       - "worker-service/**"
       - ".github/workflows/worker-service.yml"
@@ -13,12 +13,12 @@ permissions:
 
 jobs:
   build-and-push:
-    name: Build and Push Auth Service
+    name: Build and Push Worker Service
     runs-on: ubuntu-latest
 
     defaults:
       run:
-        working-directory: auth-service
+        working-directory: worker-service
 
     steps:
       - name: Checkout Repository
