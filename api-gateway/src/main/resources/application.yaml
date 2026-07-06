@@ -34,6 +34,7 @@ spring:
           filters:
             - JwtAuthFilter
 
+
 eureka:
   client:
     service-url:
@@ -43,6 +44,7 @@ eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}
+
 app:
   jwt:
     secret: dGhpcy1pcy1hLXNlY3JldC1rZXktZm9yLWZsb3dmb3JnZS1hdXRoLXNlcnZpY2U=

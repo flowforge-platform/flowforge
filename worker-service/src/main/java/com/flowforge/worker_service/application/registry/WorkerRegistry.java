@@ -13,9 +13,9 @@ import java.util.Objects;
 @Slf4j
 public class WorkerRegistry {
     private final Map<String, WorkerHandler> registry=new HashMap<>();
-
     public WorkerRegistry(List<WorkerHandler> handlers){
-        handlers.forEach(workerHandler -> registry.put(workerHandler.getType(),workerHandler));
+        handlers.forEach(
+                workerHandler -> registry.put(workerHandler.getType(),workerHandler));
         log.info("Registered workers: {}", registry.keySet());
     }
 
