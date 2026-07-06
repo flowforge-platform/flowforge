@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public record TaskCompletedEvent(
         String workflowExecutionId,
-        UUID taskExecutionId,
+        String taskExecutionId,
         String nodeId,
         String nodeType,
         TaskStatus status,
