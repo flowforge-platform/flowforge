@@ -29,4 +29,27 @@ public class GraphBuilder {
         }
         return graph;
     }
+
+    public List<WorkflowNode> findStartNodes(
+            List<WorkflowNode> nodes,
+            List<WorkflowEdge> edges
+    ) {
+        Set<UUID> nodesWithIncomingEdges = new HashSet<>();
+
+        for (WorkflowEdge edge : edges) {
+            nodesWithIncomingEdges.add(
+                    edge.getTargetNode().getId()
+            );
+        }
+
+        List<WorkflowNode> startNodes = new ArrayList<>();
+
+        for (WorkflowNode node : nodes) {
+            if (!nodesWithIncomingEdges.contains(node.getId())) {
+                startNodes.add(node);
+            }
+        }
+
+        return startNodes;
+    }
 }

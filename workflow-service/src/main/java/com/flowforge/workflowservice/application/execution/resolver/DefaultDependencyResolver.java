@@ -1,5 +1,6 @@
 package com.flowforge.workflowservice.application.execution.resolver;
 
+import com.flowforge.workflowservice.application.execution.scheduler.NodeScheduler;
 import com.flowforge.workflowservice.domain.edge.WorkflowEdge;
 import com.flowforge.workflowservice.domain.execution.WorkflowExecution;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;

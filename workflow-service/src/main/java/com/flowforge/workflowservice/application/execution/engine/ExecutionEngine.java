@@ -2,7 +2,9 @@ package com.flowforge.workflowservice.application.execution.engine;
 
 import com.flowforge.workflowservice.application.execution.event.TaskCompletedEvent;
 import com.flowforge.workflowservice.application.execution.resolver.DependencyResolver;
+import com.flowforge.workflowservice.application.execution.scheduler.NodeScheduler;
 import com.flowforge.workflowservice.application.execution.state.TaskStateMachine;
+import com.flowforge.workflowservice.application.execution.state.WorkflowStateMachine;
 import com.flowforge.workflowservice.common.exception.BusinessException;
 import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.TaskExecution;
@@ -21,21 +23,35 @@ import java.util.List;
 public class ExecutionEngine {
     private final TaskExecutionRepository taskExecutionRepository;
     private final TaskStateMachine taskStateMachine;
+    private final WorkflowStateMachine workflowStateMachine;
     private final DependencyResolver dependencyResolver;
+    private final NodeScheduler nodeScheduler;
 
     @Transactional
     public void handleTaskCompleted(TaskCompletedEvent event) {
         TaskExecution taskExecution = taskExecutionRepository.findById(event.taskExecutionId())
                 .orElseThrow(()-> new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
         taskStateMachine.completeTaskExecution(taskExecution);
-        List<WorkflowNode> nextNodes =  dependencyResolver.resolveNextNodes(
+        List<WorkflowNode> runnableNodes =  dependencyResolver.resolveNextNodes(
                 taskExecution.getWorkflowExecution(),
                 taskExecution.getNode());
+
+        if (runnableNodes.isEmpty()) {
+            workflowStateMachine.completeWorkflowExecution(
+                    taskExecution.getWorkflowExecution()
+            );
+            log.info(
+                    "WorkflowExecution={} completed successfully",
+                    taskExecution.getWorkflowExecution().getId()
+            );
+            return;
+        }
+        nodeScheduler.schedule(taskExecution.getWorkflowExecution(),runnableNodes);
         log.info(
                 "WorkflowExecution={} | Completed Node={} | Next Nodes={}",
                 taskExecution.getWorkflowExecution().getId(),
                 taskExecution.getNode().getNodeType(),
-                nextNodes.stream()
+                runnableNodes.stream()
                         .map(WorkflowNode::getNodeType)
                         .toList()
         );
