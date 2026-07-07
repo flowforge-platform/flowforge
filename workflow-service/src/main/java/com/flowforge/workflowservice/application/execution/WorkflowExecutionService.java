@@ -1,10 +1,9 @@
 package com.flowforge.workflowservice.application.execution;
 
-import com.flowforge.workflowservice.application.execution.port.EventPublisher;
+import com.flowforge.workflowservice.application.execution.scheduler.NodeScheduler;
 import com.flowforge.workflowservice.application.execution.state.TaskStateMachine;
 import com.flowforge.workflowservice.application.execution.state.WorkflowStateMachine;
 import com.flowforge.workflowservice.application.workflow.graph.GraphBuilder;
-import com.flowforge.workflowservice.application.workflow.graph.TopologicalSorter;
 import com.flowforge.workflowservice.common.exception.BusinessException;
 import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.TaskExecution;
@@ -26,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,12 +38,12 @@ import java.util.stream.Collectors;
 public class WorkflowExecutionService {
     private final WorkflowRepository workflowRepository;
     private final WorkflowExecutionRepository workflowExecutionRepository;
-    private final TaskExecutionRepository taskExecutionRepository;
     private final GraphBuilder graphBuilder;
-    private final TopologicalSorter topologicalSorter;
-    private final EventPublisher eventPublisher;
     private final WorkflowStateMachine workflowStateMachine;
+    private final NodeScheduler nodeScheduler;
+    private final TaskExecutionRepository taskExecutionRepository;
     private final TaskStateMachine taskStateMachine;
+
 
     @Transactional
     public StartExecutionResponse startExecution(UUID workflowId,UUID organizationId,UUID userId){
@@ -69,63 +68,29 @@ public class WorkflowExecutionService {
 
         workflowStateMachine.startWorkflowExecution(workflowExecution);
 
-        Map<UUID, List<UUID>> graph =
-                graphBuilder.buildGraph(
-                        workflow.getNodes()
-                        ,workflow.getEdges());
-
-        // Generate node execution order from workflow DAG
-        List<UUID> executionOrder = topologicalSorter.sort(graph);
-
-        Map<UUID, WorkflowNode> nodeMap = workflow
-                .getNodes()
+        WorkflowExecution finalWorkflowExecution = workflowExecution;
+        List<TaskExecution> taskExecutions = workflow.getNodes()
                 .stream()
-                .collect(Collectors.toMap(
-                        WorkflowNode::getId,
-                        node -> node
-                ));
+                .map(node ->
+                        TaskExecution.builder()
+                                .workflowExecution(finalWorkflowExecution)
+                                .node(node)
+                                .status(TaskExecutionStatus.PENDING)
+                                .build()
+                )
+                .toList();
 
-        List<TaskExecution> taskExecutions = new ArrayList<>();
-
-        // Create pending task executions in workflow execution order
-        for(UUID nodeId : executionOrder){
-
-            WorkflowNode node = nodeMap.get(nodeId);
-
-            taskExecutions.add(TaskExecution.builder()
-                    .workflowExecution(workflowExecution)
-                    .node(node)
-                    .status(TaskExecutionStatus.PENDING)
-                    .build());
-        }
-
-        // Persist all task executions together
         taskExecutionRepository.saveAll(taskExecutions);
 
-        log.info(
-                "Publishing {} task-created events",
-                taskExecutions.size()
-        );
+        List<WorkflowNode> startNodes =
+                graphBuilder.findStartNodes(
+                        workflow.getNodes(),
+                        workflow.getEdges()
+                );
 
-        for(TaskExecution taskExecution : taskExecutions){
-
-            taskStateMachine.startTaskExecution(taskExecution);
-
-           eventPublisher.publishTaskCreated(
-                   new TaskCreatedEvent(
-                           workflowExecution.getId(),
-                           taskExecution.getId(),
-                           taskExecution.getNode().getId(),
-                           taskExecution.getNode().getNodeType().name(),
-                           taskExecution.getNode().getConfiguration()
-                   )
-           );
-        }
-
-        log.info(
-                "Workflow execution {} created with {} tasks",
-                workflowExecution.getId(),
-                executionOrder.size()
+        nodeScheduler.schedule(
+                workflowExecution,
+                startNodes
         );
 
         return new StartExecutionResponse(
