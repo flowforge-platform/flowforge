@@ -13,4 +13,9 @@ public interface TaskExecutionRepository extends JpaRepository<TaskExecution, UU
     List<TaskExecution> findByWorkflowExecutionId(
             UUID workflowExecutionId
     );
+
+    Optional<TaskExecution> findByWorkflowExecutionIdAndNodeId(
+            UUID workflowExecutionId,
+            UUID nodeId
+    );
 }
