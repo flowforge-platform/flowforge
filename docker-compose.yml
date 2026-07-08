@@ -65,7 +65,10 @@ services:
       - ./database:/app/database
 
   worker-service:
-    image: aswinrj/worker-service
+    build:
+      context: .
+      dockerfile: worker-service/Dockerfile
+    image: flowforge/worker-service:local
     container_name: worker-service
     restart: always
     depends_on:
