@@ -14,6 +14,7 @@ com\flowforge\auth_service\dto\RegisterWithInviteRequest.class
 com\flowforge\auth_service\facade\InvitationFacade.class
 com\flowforge\auth_service\model\User.class
 com\flowforge\auth_service\dto\CreateInvitationResponse$CreateInvitationResponseBuilder.class
+com\flowforge\auth_service\exception\InvitationEmailSentFailedException.class
 com\flowforge\auth_service\config\SwaggerConfig.class
 com\flowforge\auth_service\security\JwtService.class
 com\flowforge\auth_service\security\UserPrincipal.class
@@ -21,6 +22,7 @@ com\flowforge\auth_service\mapper\UserMapper.class
 com\flowforge\auth_service\model\Organization.class
 com\flowforge\auth_service\controller\InvitationController.class
 com\flowforge\auth_service\dto\RefreshTokenRequest$RefreshTokenRequestBuilder.class
+com\flowforge\auth_service\service\AuthenticationService.class
 com\flowforge\auth_service\dto\CreateInvitationRequest$CreateInvitationRequestBuilder.class
 com\flowforge\auth_service\AuthServiceApplication.class
 com\flowforge\auth_service\service\UserService.class

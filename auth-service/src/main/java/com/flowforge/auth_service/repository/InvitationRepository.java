@@ -10,8 +10,10 @@ import org.springframework.stereotype.Repository;
 import java.time.Instant;
 import java.util.Optional;
 
+import java.util.UUID;
+
 @Repository
-public interface InvitationRepository extends JpaRepository<Invitation,String> {
+public interface InvitationRepository extends JpaRepository<Invitation,UUID> {
 
     Optional<Invitation> findByToken(String token);
 
