@@ -51,7 +51,7 @@ jobs:
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
-          context: ./auth-service
+          context: .
           file: ./auth-service/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
