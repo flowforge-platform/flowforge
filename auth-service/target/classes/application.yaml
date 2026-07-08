@@ -24,6 +24,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+    locations: filesystem:/app/database/migrations
 
   mail:
     host: flowforge-mailpit
