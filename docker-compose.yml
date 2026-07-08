@@ -52,7 +52,9 @@ services:
       - "8025:8025"
 
   workflow-service:
-    image: anzyl/workflow-service:v1
+    build:
+      context: ./workflow-service
+    image: workflow-service:local
     container_name: workflow-service
     ports:
       - "8082:8082"
