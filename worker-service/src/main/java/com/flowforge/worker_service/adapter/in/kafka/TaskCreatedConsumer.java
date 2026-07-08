@@ -27,8 +27,7 @@ public class TaskCreatedConsumer {
             backoff = @Backoff(delay = 1000, multiplier = 2),
             autoCreateTopics = "true",
             topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE,
-            include = { WorkerExecutionException.class },
-            exclude = { JsonProcessingException.class }
+            include = { WorkerExecutionException.class }
     )
     @KafkaListener(
             topics = "task-created",
