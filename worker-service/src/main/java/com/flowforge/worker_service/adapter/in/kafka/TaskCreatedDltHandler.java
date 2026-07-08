@@ -24,7 +24,7 @@ public class TaskCreatedDltHandler {
     )
     public void handleDlt(String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic, @Header(KafkaHeaders.EXCEPTION_MESSAGE) String exceptionMessage) {
 
-        log.error("Task-created message sent to DLT from topic {}: {} | reason: {}",
+        log.error("Task-created  message sent to DLT from topic {}: {} | reason: {}",
                 topic, message, exceptionMessage);
 
         DeadLetterTaskEntity entity = DeadLetterTaskEntity.builder()
