@@ -25,6 +25,9 @@ spring:
     enabled: true
     baseline-on-migrate: true
     locations: filesystem:/app/database/migrations
+    schemas: auth
+    default-schema: auth
+    create-schemas: true
 
   mail:
     host: flowforge-mailpit

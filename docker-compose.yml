@@ -27,6 +27,8 @@ services:
       - discovery-service
     ports:
       - "8083:8082"
+    volumes:
+      - ./database/auth:/app/database/migrations
 
   db:
     image: postgres:16-alpine
