@@ -18,10 +18,11 @@ spring:
 
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations: filesystem:/app/database/migrations
+    create-schemas: true
 
   kafka:
-    bootstrap-servers: flowforge-kafka:29092
+    bootstrap-servers: flowforge-kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
