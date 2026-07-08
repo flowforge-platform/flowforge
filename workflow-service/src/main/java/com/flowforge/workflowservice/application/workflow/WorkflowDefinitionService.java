@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.flowforge.workflowservice.common.exception.BusinessException;
 import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.edge.WorkflowEdge;
+import com.flowforge.workflowservice.domain.node.NodeType;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.domain.workflow.Workflow;
 import com.flowforge.workflowservice.domain.workflow.WorkflowStatus;
@@ -53,7 +54,6 @@ public class WorkflowDefinitionService {
             );
         }
 
-
         // Replace the existing workflow graph with the latest definition
         workflowEdgeRepository.deleteByWorkflow_Id(workflowId);
         workflowNodeRepository.deleteByWorkflow_Id(workflowId);
@@ -63,6 +63,21 @@ public class WorkflowDefinitionService {
         for( NodeDefinitionRequest nodeRequest : request.nodes()){
             JsonNode config =
                     objectMapper.valueToTree(nodeRequest.configuration());
+
+            if (nodeRequest.nodeType() == NodeType.EMAIL) {
+                if (!config.hasNonNull("to")) {
+                    throw new BusinessException(ErrorCode.INVALID_EMAIL_CONFIGURATION);
+                }
+
+                if (!config.hasNonNull("subject")) {
+                    throw new BusinessException(ErrorCode.INVALID_EMAIL_CONFIGURATION);
+                }
+
+                if (!config.hasNonNull("body")) {
+                    throw new BusinessException(ErrorCode.INVALID_EMAIL_CONFIGURATION);
+                }
+            }
+
             WorkflowNode node = WorkflowNode.builder()
                     .workflow(workflow)
                     .nodeKey(nodeRequest.nodeKey())
