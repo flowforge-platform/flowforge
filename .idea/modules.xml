@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/flowforge.iml" filepath="$PROJECT_DIR$/.idea/flowforge.iml" />
-      <module fileurl="file://$PROJECT_DIR$/workflow-service/workflow-service.iml" filepath="$PROJECT_DIR$/workflow-service/workflow-service.iml" />
     </modules>
   </component>
 </project>

@@ -22,6 +22,7 @@ C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowfor
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\exception\InvalidInviteTokenException.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\exception\InvalidRefreshTokenException.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\exception\InvitationAlreadyUsedException.java
+C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\exception\InvitationEmailSentFailedException.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\exception\InvitationExpiredException.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\exception\OrganizationAlreadyExistsException.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\exception\OrganizationNotFoundException.java
@@ -41,6 +42,7 @@ C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowfor
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\security\JwtService.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\security\SecurityConfig.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\security\UserPrincipal.java
+C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\service\AuthenticationService.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\service\InvitationService.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\service\MailService.java
 C:\Users\ceasw\OneDrive\Desktop\flowforge\auth-service\src\main\java\com\flowforge\auth_service\service\OrganizationService.java

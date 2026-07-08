@@ -23,7 +23,7 @@ public class Invitation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    private UUID id;
 
     @Column(nullable = false,unique = true)
     private String token;
