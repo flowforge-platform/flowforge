@@ -1,5 +1,6 @@
 package com.flowforge.auth_service.service;
 
+import com.flowforge.auth_service.exception.InvitationEmailSentFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,8 +36,8 @@ public class MailService {
             mailSender.send(message);
             log.info("Invitation email sent successfully to {}", toEmail);
         } catch (Exception e) {
-            //throw
             log.error("Failed to send invitation email to {}: {}. Dev invitation token: {}", toEmail, e.getMessage(), token);
+            throw new InvitationEmailSentFailedException(e.getMessage());
         }
     }
 }
