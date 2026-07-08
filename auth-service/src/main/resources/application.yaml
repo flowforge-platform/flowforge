@@ -25,8 +25,8 @@ spring:
     enabled: true
     baseline-on-migrate: true
     locations: filesystem:/app/database/migrations
-    schemas: worker
-    default-schema: worker
+    schemas: auth
+    default-schema: auth
     create-schemas: true
 
   mail:
