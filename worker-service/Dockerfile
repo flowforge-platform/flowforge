@@ -8,3 +8,4 @@ COPY database/migrations /app/database/migrations
 EXPOSE 8084
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
