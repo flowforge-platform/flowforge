@@ -64,6 +64,10 @@ public class GlobalExceptionHandler {
     public ApiResponse<Void> handleOrganizationNotFound(Exception ex) {
         return ApiResponse.error(ex.getMessage());
     }
+    @ExceptionHandler(InvitationEmailSentFailedException.class)
+    public ApiResponse<Void> handleInvitationEmailSentFailed(Exception ex) {
+        return ApiResponse.error(ex.getMessage());
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
