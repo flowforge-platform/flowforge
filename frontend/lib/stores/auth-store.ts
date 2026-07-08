@@ -6,6 +6,8 @@ interface AuthState {
   refreshToken: string | null;
   tokenType: string | null;
 
+  hasHydrated: boolean;
+
   setTokens: (
     accessToken: string,
     refreshToken: string,
@@ -13,6 +15,7 @@ interface AuthState {
   ) => void;
 
   clearTokens: () => void;
+  setHasHydrated: (state: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -21,6 +24,7 @@ export const useAuthStore = create<AuthState>()(
       accessToken: null,
       refreshToken: null,
       tokenType: null,
+      hasHydrated: false,
 
       setTokens: (accessToken, refreshToken, tokenType) =>
         set({
@@ -35,9 +39,20 @@ export const useAuthStore = create<AuthState>()(
           refreshToken: null,
           tokenType: null,
         }),
+
+      setHasHydrated: (state) =>
+        set({
+          hasHydrated: state,
+        })
+
     }),
+    
     {
       name: "flowforge-auth",
+
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );

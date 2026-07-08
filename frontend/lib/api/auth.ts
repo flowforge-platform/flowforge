@@ -9,3 +9,9 @@ export async function login(credentials: LoginRequest) {
 
   return response.data;
 }
+
+export async function refreshToken(refreshToken: string) {
+  return api.post("/api/auth/refresh", {
+    refreshToken,
+  });
+}

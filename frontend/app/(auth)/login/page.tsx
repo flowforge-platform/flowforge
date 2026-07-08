@@ -39,6 +39,7 @@ export default function Login() {
   const [errors, setErrors] = useState<FormErrors>({});
   const {setTokens} =  useAuthStore()
   const [serverError, setServerError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
     const nextErrors: FormErrors = {};
@@ -60,40 +61,35 @@ export default function Login() {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     if (!validateForm()) return;
-    
+
+    setIsLoading(true);
+
     try {
       const response = await login({
-          email,
-          password,
+        email,
+        password,
       });
 
-      if (response.success && response.data) {
-      
-          setTokens(
-              response.data.accessToken,
-              response.data.refreshToken,
-              response.data.tokenType
-          );
-        
-          router.push("/dashboard");
-        
-      } else {
-      
-          console.error(response.message);
-      
-      }
-
-      if(!response.success){
+      if (!response.success || !response.data) {
         setServerError(response.message);
         return;
       }
 
+      setTokens(
+        response.data.accessToken,
+        response.data.refreshToken,
+        response.data.tokenType
+      );
+
+      router.replace("/dashboard");
     } catch (error) {
-      console.error("Login Failed:", error);
+      setServerError("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -176,8 +172,9 @@ export default function Login() {
                 <button
                   className="h-8 rounded-md bg-[#b9b7f6] text-sm font-medium text-[#1400a7] transition hover:bg-[#c6c4ff]"
                   type="button"
+                  disabled={isLoading}
                 >
-                  Sign In
+                  {isLoading ? "Signing In..." : "Sign In"} 
                 </button>
                 <button
                   className="h-8 rounded-md text-sm font-medium text-[#d7d5e4] transition hover:bg-[#1f1f25]"
@@ -295,6 +292,11 @@ export default function Login() {
                 ) : null}
               </div>
 
+                {serverError&&(
+                  <p className="text-sm text-red-500">
+                    {serverError}
+                  </p>
+                )}
               <label className="flex w-fit cursor-pointer items-center gap-3 text-sm text-[#c8c6d4]">
                 <input
                   checked={rememberMe}
