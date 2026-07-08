@@ -1,6 +1,7 @@
 package com.flowforge.worker_service.domain.model;
 
 import com.flowforge.worker_service.domain.enums.TaskStatus;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
