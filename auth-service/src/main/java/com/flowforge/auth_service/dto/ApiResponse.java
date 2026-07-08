@@ -23,7 +23,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> success(T data) {
-        return success(data, "Request processed successfully");
+        return success(data, "Request  .processed successfully");
     }
 
     public static <T> ApiResponse<T> error(String message, Object errors) {
