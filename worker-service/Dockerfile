@@ -2,8 +2,7 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY worker-service/target/*.jar app.jar
-COPY database/migrations /app/database/migrations
+COPY target/*.jar app.jar
 
 EXPOSE 8084
 
