@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
@@ -48,6 +49,10 @@ public class JwtAuthFilter extends AbstractGatewayFilterFactory<JwtAuthFilter.Co
     public GatewayFilter apply(Config config) {
         return (exchange, chain) -> {
             String path = exchange.getRequest().getPath().toString();
+
+            if (HttpMethod.OPTIONS.equals(exchange.getRequest().getMethod())) {
+                return chain.filter(exchange);
+            }
 
             if (PUBLIC_ENDPOINTS.stream().anyMatch(pattern -> pathMatcher.match(pattern, path))) {
                 return chain.filter(exchange);
