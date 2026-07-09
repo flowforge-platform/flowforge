@@ -3,8 +3,7 @@ FROM eclipse-temurin:21-jre
 WORKDIR /app
 
 COPY auth-service/target/*.jar app.jar
-COPY database/migrations /app/database/migrations
 
 EXPOSE 8082
 
-ENTRYPOINT ["java","-jar","app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
