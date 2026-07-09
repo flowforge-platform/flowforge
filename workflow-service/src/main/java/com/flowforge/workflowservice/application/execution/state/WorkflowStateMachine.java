@@ -21,10 +21,18 @@ public class WorkflowStateMachine {
         if (execution.getStatus() != WorkflowExecutionStatus.PENDING) {
             throw new BusinessException(ErrorCode.INVALID_WORKFLOW_STATE_TRANSITION);
         }
-        execution.setStatus(WorkflowExecutionStatus.RUNNING);
-        execution.setStartedAt(Instant.now());
 
-        workflowExecutionRepository.save(execution);
+        log.info("INSIDE BEFORE -> status={}, startedAt={}",
+                execution.getStatus(),
+                execution.getStartedAt());
+
+        execution.setStatus(WorkflowExecutionStatus.RUNNING);
+
+        execution.setStartedAt(Instant.now());
+        log.info("INSIDE AFTER -> status={}, startedAt={}",
+                execution.getStatus(),
+                execution.getStartedAt());
+
     }
 
     public void completeWorkflowExecution(WorkflowExecution execution) {

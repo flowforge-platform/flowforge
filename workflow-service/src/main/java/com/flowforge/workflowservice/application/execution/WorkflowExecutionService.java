@@ -64,9 +64,17 @@ public class WorkflowExecutionService {
                 .status(WorkflowExecutionStatus.PENDING)
                 .build();
 
-        workflowExecution = workflowExecutionRepository.save(workflowExecution);
+        log.info("BEFORE -> status={}, startedAt={}",
+                workflowExecution.getStatus(),
+                workflowExecution.getStartedAt());
 
         workflowStateMachine.startWorkflowExecution(workflowExecution);
+
+        log.info("AFTER -> status={}, startedAt={}",
+                workflowExecution.getStatus(),
+                workflowExecution.getStartedAt());
+
+        workflowExecution = workflowExecutionRepository.save(workflowExecution);
 
         WorkflowExecution finalWorkflowExecution = workflowExecution;
         List<TaskExecution> taskExecutions = workflow.getNodes()
