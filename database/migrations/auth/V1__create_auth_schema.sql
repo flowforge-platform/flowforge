@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS auth;
+SET search_path TO auth;
+
 CREATE TABLE organizations (
                                id UUID PRIMARY KEY,
 

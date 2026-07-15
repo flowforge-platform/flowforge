@@ -22,7 +22,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    locations: filesystem:/app/database/migrations
+    locations: filesystem:/app/database/migrations/worker
     schemas: worker
     default-schema: worker
     create-schemas: true
