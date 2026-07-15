@@ -1,5 +1,6 @@
 package com.flowforge.workflowservice.application.execution.engine;
 
+import com.flowforge.workflowservice.application.execution.SystemNodeExecutor;
 import com.flowforge.workflowservice.application.execution.event.TaskCompletedEvent;
 import com.flowforge.workflowservice.application.execution.resolver.DependencyResolver;
 import com.flowforge.workflowservice.application.execution.scheduler.NodeScheduler;
@@ -8,6 +9,7 @@ import com.flowforge.workflowservice.application.execution.state.WorkflowStateMa
 import com.flowforge.workflowservice.common.exception.BusinessException;
 import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.TaskExecution;
+import com.flowforge.workflowservice.domain.node.NodeType;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +24,29 @@ import java.util.List;
 @Slf4j
 public class ExecutionEngine {
     private final TaskExecutionRepository taskExecutionRepository;
-    private final TaskStateMachine taskStateMachine;
     private final WorkflowStateMachine workflowStateMachine;
     private final DependencyResolver dependencyResolver;
     private final NodeScheduler nodeScheduler;
+    private final TaskStateMachine taskStateMachine;
+    private final SystemNodeExecutor systemNodeExecutor;
 
     @Transactional
-    public void handleTaskCompleted(TaskCompletedEvent event) {
-        TaskExecution taskExecution = taskExecutionRepository.findById(event.taskExecutionId())
-                .orElseThrow(()-> new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
-        taskStateMachine.completeTaskExecution(taskExecution);
+    public void handleTaskCompleted(TaskExecution taskExecution) {
+        log.info(
+                "ExecutionEngine handling {}",
+                taskExecution.getNode().getNodeType()
+        );
+
         List<WorkflowNode> runnableNodes =  dependencyResolver.resolveNextNodes(
                 taskExecution.getWorkflowExecution(),
                 taskExecution.getNode());
+
+        log.info(
+                "Resolved next nodes {}",
+                runnableNodes.stream()
+                        .map(WorkflowNode::getNodeType)
+                        .toList()
+        );
 
         if (runnableNodes.isEmpty()) {
             workflowStateMachine.completeWorkflowExecution(
@@ -46,7 +58,33 @@ public class ExecutionEngine {
             );
             return;
         }
-        nodeScheduler.schedule(taskExecution.getWorkflowExecution(),runnableNodes);
+
+        for (WorkflowNode node : runnableNodes) {
+
+            if (node.getNodeType() == NodeType.START ||
+                    node.getNodeType() == NodeType.END) {
+
+                TaskExecution nextTask =
+                        taskExecutionRepository
+                                .findByWorkflowExecutionIdAndNodeId(
+                                        taskExecution.getWorkflowExecution().getId(),
+                                        node.getId()
+                                )
+                                .orElseThrow(() ->
+                                        new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
+
+                systemNodeExecutor.execute(nextTask);
+
+                handleTaskCompleted(nextTask);
+
+            } else {
+
+                nodeScheduler.schedule(
+                        taskExecution.getWorkflowExecution(),
+                        node
+                );
+            }
+        }
         log.info(
                 "WorkflowExecution={} | Completed Node={} | Next Nodes={}",
                 taskExecution.getWorkflowExecution().getId(),
@@ -55,5 +93,18 @@ public class ExecutionEngine {
                         .map(WorkflowNode::getNodeType)
                         .toList()
         );
+    }
+
+    @Transactional
+    public void handleTaskCompleted(TaskCompletedEvent event) {
+
+        TaskExecution taskExecution =
+                taskExecutionRepository.findById(event.taskExecutionId())
+                        .orElseThrow(() ->
+                                new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
+
+        taskStateMachine.completeTaskExecution(taskExecution);
+
+        handleTaskCompleted(taskExecution);
     }
 }
