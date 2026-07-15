@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS worker;
+SET search_path TO worker;
+
 CREATE TABLE worker_tasks (
     id                      UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
     workflow_execution_id   UUID,
