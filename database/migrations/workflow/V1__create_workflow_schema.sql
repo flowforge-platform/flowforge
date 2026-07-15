@@ -1,3 +1,6 @@
+CREATE SCHEMA IF NOT EXISTS workflow;
+SET search_path TO workflow;
+
 CREATE TABLE workflows (
                            id UUID PRIMARY KEY,
 
