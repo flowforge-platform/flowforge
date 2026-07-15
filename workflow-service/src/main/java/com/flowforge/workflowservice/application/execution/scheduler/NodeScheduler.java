@@ -10,6 +10,7 @@ import com.flowforge.workflowservice.domain.execution.WorkflowExecution;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,17 +18,18 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class NodeScheduler {
     private final TaskExecutionRepository taskExecutionRepository;
     private final EventPublisher eventPublisher;
-    private final TaskStateMachine taskStateMachine;
+    private  final TaskStateMachine taskStateMachine;
 
     @Transactional
     public void schedule(
             WorkflowExecution execution,
-            List<WorkflowNode> runnableNodes
+            WorkflowNode node
     ) {
-        for(WorkflowNode node : runnableNodes){
+            log.info("Entered NodeScheduler");
             TaskExecution taskExecution =
                     taskExecutionRepository
                             .findByWorkflowExecutionIdAndNodeId(
@@ -36,22 +38,30 @@ public class NodeScheduler {
                             )
                             .orElseThrow(()->new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
 
-            taskStateMachine.startTaskExecution(taskExecution);
-
-            TaskExecution savedTaskExecution =
-                    taskExecutionRepository.save(taskExecution);
-
-            TaskCreatedEvent event = new TaskCreatedEvent(
-                    execution.getId(),
-                    savedTaskExecution.getId(),
-                    node.getId(),
-                    node.getNodeType().name(),
-                    node.getConfiguration()
+            log.info(
+                    "Scheduling {} ({})",
+                    node.getNodeKey(),
+                    node.getNodeType()
             );
 
-            eventPublisher.publishTaskCreated(event);
-        }
+                taskStateMachine.startTaskExecution(taskExecution);
+                taskExecutionRepository.save(taskExecution);
+
+                TaskCreatedEvent event = new TaskCreatedEvent(
+                        execution.getId(),
+                        taskExecution.getId(),
+                        node.getId(),
+                        node.getNodeType().name(),
+                        node.getConfiguration()
+                );
+
+            log.info(
+                    "Publishing task-created for node {} ({})",
+                    node.getNodeKey(),
+                    node.getNodeType()
+            );
+                eventPublisher.publishTaskCreated(event);
+
 
     }
-
 }
