@@ -21,6 +21,19 @@ public class KafkaPublisher implements EventPublisher {
         );
         kafkaTemplate.send(
                 KafkaTopics.TASK_CREATED,
-                event);
+                event)
+                .whenComplete((result, ex) -> {
+
+            if (ex != null) {
+                log.error("Failed to publish task-created", ex);
+                return;
+            }
+
+            log.info(
+                    "Published task-created to partition={} offset={}",
+                    result.getRecordMetadata().partition(),
+                    result.getRecordMetadata().offset()
+            );
+        });
     }
 }

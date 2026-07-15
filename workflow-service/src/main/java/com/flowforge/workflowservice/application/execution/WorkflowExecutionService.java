@@ -1,7 +1,6 @@
 package com.flowforge.workflowservice.application.execution;
 
-import com.flowforge.workflowservice.application.execution.scheduler.NodeScheduler;
-import com.flowforge.workflowservice.application.execution.state.TaskStateMachine;
+import com.flowforge.workflowservice.application.execution.engine.ExecutionEngine;
 import com.flowforge.workflowservice.application.execution.state.WorkflowStateMachine;
 import com.flowforge.workflowservice.application.workflow.graph.GraphBuilder;
 import com.flowforge.workflowservice.common.exception.BusinessException;
@@ -13,7 +12,6 @@ import com.flowforge.workflowservice.domain.execution.WorkflowExecutionStatus;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.domain.workflow.Workflow;
 import com.flowforge.workflowservice.domain.workflow.WorkflowStatus;
-import com.flowforge.workflowservice.application.execution.event.TaskCreatedEvent;
 import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowExecutionRepository;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowRepository;
@@ -40,9 +38,9 @@ public class WorkflowExecutionService {
     private final WorkflowExecutionRepository workflowExecutionRepository;
     private final GraphBuilder graphBuilder;
     private final WorkflowStateMachine workflowStateMachine;
-    private final NodeScheduler nodeScheduler;
     private final TaskExecutionRepository taskExecutionRepository;
-    private final TaskStateMachine taskStateMachine;
+    private final SystemNodeExecutor systemNodeExecutor;
+    private final ExecutionEngine executionEngine;
 
 
     @Transactional
@@ -96,10 +94,23 @@ public class WorkflowExecutionService {
                         workflow.getEdges()
                 );
 
-        nodeScheduler.schedule(
-                workflowExecution,
-                startNodes
-        );
+        for (WorkflowNode startNode : startNodes) {
+
+            TaskExecution startTask =
+                    taskExecutionRepository
+                            .findByWorkflowExecutionIdAndNodeId(
+                                    workflowExecution.getId(),
+                                    startNode.getId()
+                            )
+                            .orElseThrow(() ->
+                                    new BusinessException(
+                                            ErrorCode.TASK_EXECUTION_NOT_FOUND
+                                    ));
+
+            systemNodeExecutor.execute(startTask);
+
+            executionEngine.handleTaskCompleted(startTask);
+        }
 
         return new StartExecutionResponse(
                 workflowExecution.getId(),
