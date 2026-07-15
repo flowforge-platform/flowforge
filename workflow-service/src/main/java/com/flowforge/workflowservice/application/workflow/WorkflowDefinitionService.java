@@ -95,7 +95,6 @@ public class WorkflowDefinitionService {
         for( EdgeDefinitionRequest edgeRequest : request.edges()){
             WorkflowNode sourceNode = nodeMap.get(edgeRequest.sourceClientId());
             WorkflowNode targetNode = nodeMap.get(edgeRequest.targetClientId());
-
             if (sourceNode == null || targetNode == null) {
                 throw new BusinessException(
                         ErrorCode.INVALID_WORKFLOW_DEFINITION

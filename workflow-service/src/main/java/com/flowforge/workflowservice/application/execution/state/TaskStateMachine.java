@@ -27,9 +27,7 @@ public class TaskStateMachine {
 
         taskExecutionRepository.save(task);
     }
-
     public void completeTaskExecution(TaskExecution task) {
-
         if (task.getStatus() != TaskExecutionStatus.RUNNING) {
             throw new BusinessException(ErrorCode.INVALID_TASK_STATE_TRANSITION);
         }
