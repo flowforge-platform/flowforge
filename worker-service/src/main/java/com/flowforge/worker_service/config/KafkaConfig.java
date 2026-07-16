@@ -1,5 +1,7 @@
 package com.flowforge.worker_service.config;
 
+import com.flowforge.worker_service.adapter.out.kafka.KafkaTopics;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -8,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.EnableKafkaRetryTopic;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.scheduling.TaskScheduler;
@@ -45,5 +48,20 @@ public class KafkaConfig {
         scheduler.setThreadNamePrefix("retry-topic-scheduler-");
         scheduler.initialize();
         return scheduler;
+    }
+    @Bean
+    public NewTopic taskSucceededTopic() {
+        return TopicBuilder.name(KafkaTopics.TASK_SUCCEEDED)
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic taskFailedTopic() {
+        return TopicBuilder.name(KafkaTopics.TASK_FAILED)
+                .partitions(3)
+                .replicas(1)
+                .build();
     }
 }
