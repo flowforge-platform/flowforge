@@ -3,6 +3,7 @@ package com.flowforge.worker_service.adapter.in.kafka;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowforge.worker_service.application.port.in.ExecuteTaskUseCase;
+import com.flowforge.worker_service.common.exception.NonRetryableException;
 import com.flowforge.worker_service.common.exception.WorkerExecutionException;
 import com.flowforge.worker_service.domain.model.WorkerResult;
 import com.flowforge.worker_service.domain.model.WorkerTask;
@@ -35,10 +36,22 @@ public class TaskCreatedConsumer {
             containerFactory = "kafkaListenerContainerFactory"
     )
     public void consume(String message) throws JsonProcessingException {
-        TaskCreatedEvent event = objectMapper.readValue(message, TaskCreatedEvent.class);
-        String payload = event.configuration() == null
-                ? "{}"
-                : objectMapper.writeValueAsString(event.configuration());
+        TaskCreatedEvent event=null;
+        try {
+            event= objectMapper.readValue(message, TaskCreatedEvent.class);
+
+
+        }catch (JsonProcessingException e){
+            log.error("Malformed task-created message, will not retry: {}", message, e);
+            throw new NonRetryableException("Malformed payload: " + e.getMessage());
+        }
+        String payload=null;
+        try {
+            payload = event.configuration() == null ? "{}" : objectMapper.writeValueAsString(event.configuration());
+        }catch (JsonProcessingException e){
+            log.error("Failed to serialize task configuration for task {}, will not retry: {}", event.taskExecutionId(), e.getMessage());
+            throw new NonRetryableException("Configuration serialization failed: " + e.getMessage());
+        }
 
         WorkerTask task = new WorkerTask(
                 event.taskExecutionId(),
