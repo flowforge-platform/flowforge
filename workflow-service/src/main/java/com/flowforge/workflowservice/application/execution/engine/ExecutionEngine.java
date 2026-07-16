@@ -1,7 +1,8 @@
 package com.flowforge.workflowservice.application.execution.engine;
 
 import com.flowforge.workflowservice.application.execution.SystemNodeExecutor;
-import com.flowforge.workflowservice.application.execution.event.TaskCompletedEvent;
+import com.flowforge.workflowservice.application.execution.event.TaskFailedEvent;
+import com.flowforge.workflowservice.application.execution.event.TaskSucceededEvent;
 import com.flowforge.workflowservice.application.execution.resolver.DependencyResolver;
 import com.flowforge.workflowservice.application.execution.scheduler.NodeScheduler;
 import com.flowforge.workflowservice.application.execution.state.TaskStateMachine;
@@ -96,7 +97,7 @@ public class ExecutionEngine {
     }
 
     @Transactional
-    public void handleTaskCompleted(TaskCompletedEvent event) {
+    public void handleTaskCompleted(TaskSucceededEvent event) {
 
         TaskExecution taskExecution =
                 taskExecutionRepository.findById(event.taskExecutionId())
@@ -106,5 +107,16 @@ public class ExecutionEngine {
         taskStateMachine.completeTaskExecution(taskExecution);
 
         handleTaskCompleted(taskExecution);
+    }
+
+    @Transactional
+    public void handleTaskFailed(TaskFailedEvent event) {
+        TaskExecution taskExecution =
+                taskExecutionRepository.findById(event.taskExecutionId())
+                        .orElseThrow(() ->
+                                new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
+
+        taskStateMachine.failTaskExecution(taskExecution, event.message());
+        workflowStateMachine.failWorkflowExecution(taskExecution.getWorkflowExecution(),taskExecution.getErrorMessage());
     }
 }
