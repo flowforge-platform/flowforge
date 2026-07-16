@@ -10,4 +10,13 @@ public class GlobalExceptionHandler {
     public String handleWorkerExecutionException(Exception ex){
         return ex.getMessage();
     }
+    @ExceptionHandler(NonRetryableException.class)
+    public String handleNonRetryableExecutionException(Exception ex){
+        return ex.getMessage();
+    }
+    @ExceptionHandler(SlackApiException.class)
+    public String handleSlackApiException(Exception ex){
+        return ex.getMessage();
+    }
+
 }

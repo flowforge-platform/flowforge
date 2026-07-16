@@ -1,10 +1,13 @@
 package com.flowforge.worker_service.adapter.out.http;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.flowforge.worker_service.common.exception.HttpTargetException;
 import com.flowforge.worker_service.domain.model.WorkerResult;
 import com.flowforge.worker_service.domain.model.WorkerTask;
 import com.flowforge.worker_service.domain.worker.WorkerHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
+import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +18,7 @@ public class HttpWorker implements WorkerHandler {
 
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final CircuitBreakerFactory circuitBreakerFactory;
 
     @Override
     public String getType() {
@@ -23,29 +27,33 @@ public class HttpWorker implements WorkerHandler {
 
     @Override
     public WorkerResult execute(WorkerTask task) {
+        CircuitBreaker circuitBreaker = circuitBreakerFactory.create("http");
+        return circuitBreaker.run(()->doExecute(task),throwable ->  WorkerResult.failure(task.getId(),"HTTP unavailable"+throwable.getMessage()));
+    }
+    private WorkerResult doExecute(WorkerTask task) {
+        HttpConfig config=null;
         try {
-            HttpConfig config = objectMapper.readValue(task.getPayload(), HttpConfig.class);
-
-            HttpHeaders headers = new HttpHeaders();
-            if (config.headers() != null) {
-                config.headers().forEach(headers::add);
-            }
-
-            HttpEntity<String> requestEntity = new HttpEntity<>(config.body(), headers);
-            HttpMethod method = HttpMethod.valueOf(config.method().toUpperCase());
-
-            ResponseEntity<String> response = restTemplate.exchange(
-                    config.url(), method, requestEntity, String.class
-            );
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                return WorkerResult.success(task.getId(), "HTTP call succeeded: " + response.getStatusCode());
-            } else {
-                return WorkerResult.failure(task.getId(), "HTTP call failed: " + response.getStatusCode());
-            }
-
-        } catch (Exception exception) {
+            config = objectMapper.readValue(task.getPayload(), HttpConfig.class);
+        }catch (Exception exception) {
             return WorkerResult.failure(task.getId(), exception.getMessage());
         }
+        HttpHeaders headers = new HttpHeaders();
+        if (config.headers() != null) {
+            config.headers().forEach(headers::add);
+        }
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(config.body(), headers);
+        HttpMethod method = HttpMethod.valueOf(config.method().toUpperCase());
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                config.url(), method, requestEntity, String.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return WorkerResult.success(task.getId(), "HTTP call succeeded: " + response.getStatusCode());
+        } else {
+            throw new HttpTargetException("HTTP call failed: " + response.getStatusCode());
+        }
+
     }
 }

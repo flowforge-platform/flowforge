@@ -45,10 +45,39 @@ spring:
 
 slack:
   bot:
-    token: {slack-bot-token}
+    token: ${SLACK_BOT_TOKEN}
 eureka:
   client:
     service-url:
       defaultZone: http://discovery-service:8761/eureka/
 
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      slack:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+      email:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+      http:
+        sliding-window-size: 10
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 30s
+        permitted-number-of-calls-in-half-open-state: 3
+#  bulkhead:
+#    instance:
+#      slack:
+#        max-concurrent-calls: 2
+#        max-wait-duration: 0
+#      http:
+#        max-concurrent-calls: 2
+#        max-wait-duration: 0
+#      email:
+#        max-concurrent-calls: 2
+#        max-wait-duration: 0
