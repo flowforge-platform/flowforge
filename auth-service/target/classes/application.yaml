@@ -25,7 +25,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    locations: filesystem:/app/database/migrations
+    locations: filesystem:/app/database/migrations/auth
     schemas: auth
     default-schema: auth
     create-schemas: true
