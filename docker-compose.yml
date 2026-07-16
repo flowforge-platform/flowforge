@@ -82,6 +82,8 @@ services:
       SLACK_BOT_TOKEN : ${SLACK_BOT_TOKEN}
     volumes:
       - ./database/migrations:/app/database/migrations
+    environment:
+      SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN}
 
   kafka:
     image: apache/kafka:latest
