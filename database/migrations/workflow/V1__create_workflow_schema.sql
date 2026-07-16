@@ -16,15 +16,8 @@ CREATE TABLE workflows (
 
                            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                           updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                           updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 
-                           CONSTRAINT fk_workflow_organization
-                               FOREIGN KEY (organization_id)
-                                   REFERENCES organizations(id),
-
-                           CONSTRAINT fk_workflow_created_by
-                               FOREIGN KEY (created_by)
-                                   REFERENCES users(id)
 );
 
 CREATE TABLE workflow_nodes (
@@ -94,15 +87,7 @@ CREATE TABLE workflow_executions (
 
                                      CONSTRAINT fk_execution_workflow
                                          FOREIGN KEY (workflow_id)
-                                             REFERENCES workflows(id),
-
-                                     CONSTRAINT fk_execution_organization
-                                         FOREIGN KEY (organization_id)
-                                             REFERENCES organizations(id),
-
-                                     CONSTRAINT fk_execution_started_by
-                                         FOREIGN KEY (started_by)
-                                             REFERENCES users(id)
+                                             REFERENCES workflows(id)
 );
 
 CREATE TABLE task_executions (
