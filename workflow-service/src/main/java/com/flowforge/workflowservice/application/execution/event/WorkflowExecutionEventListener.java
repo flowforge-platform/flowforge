@@ -13,10 +13,10 @@ public class WorkflowExecutionEventListener {
     private final ExecutionEngine executionEngine;
 
     @KafkaListener(
-            topics = "task-completed",
+            topics = "task-succeeded",
             groupId = "workflow-service"
     )
-    public void consumeTaskCompleted(TaskCompletedEvent event) {
+    public void consumeTaskCompleted(TaskSucceededEvent event) {
 
         log.info(
                 "Received task-completed event for task {}",
@@ -25,4 +25,18 @@ public class WorkflowExecutionEventListener {
 
         executionEngine.handleTaskCompleted(event);
     }
+
+    @KafkaListener(
+            topics = "task-failed",
+            groupId = "workflow-service"
+    )
+    public void consumeTaskFailed(TaskFailedEvent event){
+        log.info(
+                "Received task-failed event for task {}",
+                event.taskExecutionId()
+        );
+
+        executionEngine.handleTaskFailed(event);
+    }
+
 }
