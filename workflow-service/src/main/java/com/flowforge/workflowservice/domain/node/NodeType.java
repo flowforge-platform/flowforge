@@ -7,6 +7,7 @@ public enum NodeType {
     TASK,
     EMAIL,
     HTTP_REQUEST,
+    SLACK,
 
     CONDITION,
     APPROVAL,
