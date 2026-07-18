@@ -37,7 +37,7 @@ spring:
 
 slack:
   bot:
-    token: ${SLACK_BOT_TOKEN}
+    token: {SLACK_BOT_TOKEN}
 
 resilience4j:
   circuitbreaker:
