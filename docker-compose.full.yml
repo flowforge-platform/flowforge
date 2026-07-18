@@ -7,6 +7,8 @@ services:
     restart: always
     ports:
       - "8761:8761"
+    environment:
+      SPRING_PROFILE_ACTIVE: docker
 
   api-gateway:
     image: aswinrj/api-gateway
@@ -16,6 +18,8 @@ services:
       - discovery-service
     ports:
       - "8888:8888"
+    environment:
+      SPRING_PROFILE_ACTIVE: docker
 
   auth-service:
     image: aswinrj/auth-service
@@ -27,6 +31,8 @@ services:
       - discovery-service
     ports:
       - "8081:8081"
+    environment:
+      SPRING_PROFILE_ACTIVE: docker
     volumes:
       - ./database/migrations:/app/database/migrations
 
