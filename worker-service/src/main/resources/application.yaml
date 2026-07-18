@@ -1,15 +1,11 @@
 server:
-  port: 8084
+  port: 8083
 
 spring:
   application:
     name: worker-service
-
-  datasource:
-    url: jdbc:postgresql://flowforge-postgres:5432/flowforge
-    username: postgres
-    password: postgres
-
+  profiles:
+    default: dev
   jpa:
     hibernate:
       ddl-auto: validate
@@ -21,16 +17,16 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    locations: filesystem:/app/database/migrations/worker
     schemas: worker
     default-schema: worker
     create-schemas: true
 
+
   kafka:
-    bootstrap-servers: kafka:9092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
     consumer:
       group-id: worker-group
       auto-offset-reset: earliest
@@ -39,18 +35,9 @@ spring:
       properties:
         spring.json.trusted.packages: "*"
 
-  mail:
-    host: mailpit
-    port: 1025
-
 slack:
   bot:
     token: ${SLACK_BOT_TOKEN}
-eureka:
-  client:
-    service-url:
-      defaultZone: http://discovery-service:8761/eureka/
-
 
 resilience4j:
   circuitbreaker:
@@ -60,24 +47,47 @@ resilience4j:
         failure-rate-threshold: 50
         wait-duration-in-open-state: 30s
         permitted-number-of-calls-in-half-open-state: 3
+
       email:
         sliding-window-size: 10
         failure-rate-threshold: 50
         wait-duration-in-open-state: 30s
         permitted-number-of-calls-in-half-open-state: 3
+
       http:
         sliding-window-size: 10
         failure-rate-threshold: 50
         wait-duration-in-open-state: 30s
         permitted-number-of-calls-in-half-open-state: 3
-#  bulkhead:
-#    instance:
-#      slack:
-#        max-concurrent-calls: 2
-#        max-wait-duration: 0
-#      http:
-#        max-concurrent-calls: 2
-#        max-wait-duration: 0
-#      email:
-#        max-concurrent-calls: 2
-#        max-wait-duration: 0
+
+  bulkhead:
+    instances:
+      slack:
+        max-concurrent-calls: 10
+        max-wait-duration: 500ms
+      email:
+        max-concurrent-calls: 10
+        max-wait-duration: 500ms
+      http:
+        max-concurrent-class: 10
+        max-wait-duration: 500ms
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      access: unrestricted
+
+  metrics:
+    enable:
+      all: true
+
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0

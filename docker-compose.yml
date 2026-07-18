@@ -1,35 +1,6 @@
 version: '3.8'
 
 services:
-  discovery-service:
-    image: aswinrj/discovery-service
-    container_name: discovery-service
-    restart: always
-    ports:
-      - "8761:8761"
-
-  api-gateway:
-    image: aswinrj/api-gateway
-    container_name: api-gateway
-    restart: always
-    depends_on:
-      - discovery-service
-    ports:
-      - "8888:8081"
-
-  auth-service:
-    image: aswinrj/auth-service
-    container_name: auth-service
-    restart: always
-    depends_on:
-      - db
-      - mailpit
-      - discovery-service
-    ports:
-      - "8083:8082"
-    volumes:
-      - ./database/migrations:/app/database/migrations
-
   db:
     image: postgres:16-alpine
     container_name: flowforge-postgres
@@ -43,48 +14,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  mailpit:
-    image: axllent/mailpit:latest
-    container_name: flowforge-mailpit
-    restart: always
-    ports:
-      - "1025:1025"
-      - "8025:8025"
-
-  workflow-service:
-    build:
-      context: ./workflow-service
-    image: workflow-service:local
-    container_name: workflow-service
-    ports:
-      - "8082:8082"
-    depends_on:
-      - discovery-service
-    networks:
-      - default
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-    volumes:
-      - ./database:/app/database
-
-  worker-service:
-    image: aswinrj/worker-service
-    container_name: worker-service
-    restart: always
-    depends_on:
-      - discovery-service
-      - kafka
-      - db
-      - mailpit
-    ports:
-      - "8084:8084"
-    environment:
-      SLACK_BOT_TOKEN : ${SLACK_BOT_TOKEN}
-    volumes:
-      - ./database/migrations:/app/database/migrations
-    environment:
-      SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN}
-
   kafka:
     image: apache/kafka:latest
     container_name: flowforge-kafka
@@ -96,7 +25,7 @@ services:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
       KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:29092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
@@ -106,6 +35,52 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
 
+  redis:
+    image: redis:7-alpine
+    container_name: flowforge-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: flowforge-mailpit
+    restart: always
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: flowforge-prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitor/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: flowforge-grafana
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: flowforge-jaeger
+    restart: always
+
+    ports:
+      - "16686:16686"   # Jaeger UI
+      - "4317:4317"     # OTLP gRPC
+      - "4318:4318"     # OTLP HTTP
 volumes:
   postgres_data:
   kafka_data:
+  grafana_data:

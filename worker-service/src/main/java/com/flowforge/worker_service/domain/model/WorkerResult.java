@@ -22,5 +22,4 @@ public class WorkerResult {
         return new WorkerResult(taskId, false, error);
     }
 
-
 }

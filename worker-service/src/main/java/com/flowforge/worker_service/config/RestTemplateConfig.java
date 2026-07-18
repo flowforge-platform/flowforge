@@ -12,9 +12,9 @@ import java.time.Duration;
 public class RestTemplateConfig {
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        ClientHttpRequestFactorySettings settings=ClientHttpRequestFactorySettings.defaults();
-        settings.withConnectTimeout(Duration.ofSeconds(5));
-        settings.withReadTimeout(Duration.ofSeconds(5));
+        ClientHttpRequestFactorySettings settings=ClientHttpRequestFactorySettings.defaults().
+        withConnectTimeout(Duration.ofSeconds(5))
+        .withReadTimeout(Duration.ofSeconds(5));
         return builder.requestFactorySettings(settings).build();
 
     }

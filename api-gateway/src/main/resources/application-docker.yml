@@ -1,0 +1,13 @@
+spring:
+  data:
+    redis:
+      host: flowforge-redis
+      port: 6379
+eureka:
+  client:
+    service-url:
+      defaultZone: http://discovery-service:8761/eureka/
+management:
+  otlp:
+    tracing:
+      endpoint: http://jaeger:4318/v1/traces

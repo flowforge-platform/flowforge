@@ -11,7 +11,6 @@ public record TaskCompletedEvent(
         UUID nodeId,
         String nodeType,
         TaskStatus status,
-        boolean success,
         String message,
         LocalDateTime completedAt
 ) {

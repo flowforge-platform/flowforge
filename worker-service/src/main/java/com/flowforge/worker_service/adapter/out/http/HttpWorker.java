@@ -5,6 +5,7 @@ import com.flowforge.worker_service.common.exception.HttpTargetException;
 import com.flowforge.worker_service.domain.model.WorkerResult;
 import com.flowforge.worker_service.domain.model.WorkerTask;
 import com.flowforge.worker_service.domain.worker.WorkerHandler;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreakerFactory;
@@ -26,9 +27,13 @@ public class HttpWorker implements WorkerHandler {
     }
 
     @Override
+    @Bulkhead(name = "http",fallbackMethod = "httpFallback")
     public WorkerResult execute(WorkerTask task) {
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("http");
         return circuitBreaker.run(()->doExecute(task),throwable ->  WorkerResult.failure(task.getId(),"HTTP unavailable"+throwable.getMessage()));
+    }
+    private WorkerResult httpFallback(WorkerTask workerTask,Throwable throwable){
+        return WorkerResult.failure(workerTask.getId(),"http-worker overloaded, try again later");
     }
     private WorkerResult doExecute(WorkerTask task) {
         HttpConfig config=null;
