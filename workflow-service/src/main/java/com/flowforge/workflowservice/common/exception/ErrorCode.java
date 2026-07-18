@@ -26,7 +26,10 @@ public enum ErrorCode {
     INVALID_WORKFLOW_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "Invalid workflow execution state transition"),
     INVALID_TASK_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "Invalid task execution state transition"),
     TASK_EXECUTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Task execution not found"),
-    INVALID_EMAIL_CONFIGURATION(HttpStatus.BAD_REQUEST,"Invalid Email Configuration" );
+    INVALID_EMAIL_CONFIGURATION(HttpStatus.BAD_REQUEST,"Invalid Email Configuration" ),
+    CONDITION_FIELD_NOT_FOUND(HttpStatus.NOT_FOUND,"Condition field not found in task output"),
+    INVALID_CONDITION_COMPARISON(HttpStatus.BAD_REQUEST, "Invalid condition comparison"),
+    INVALID_CONDITION_OPERATOR(HttpStatus.BAD_REQUEST, "Unsupported condition operator");
 
     private final HttpStatus status;
     private final String message;
