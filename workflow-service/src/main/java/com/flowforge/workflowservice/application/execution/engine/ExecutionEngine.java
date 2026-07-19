@@ -42,8 +42,7 @@ public class ExecutionEngine {
         );
 
         List<WorkflowNode> runnableNodes =  dependencyResolver.resolveNextNodes(
-                taskExecution.getWorkflowExecution(),
-                taskExecution.getNode());
+                taskExecution);
 
         log.info(
                 "Resolved next nodes {}",

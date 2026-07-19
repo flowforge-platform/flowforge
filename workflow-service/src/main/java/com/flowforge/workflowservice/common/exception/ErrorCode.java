@@ -28,6 +28,7 @@ public enum ErrorCode {
     TASK_EXECUTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Task execution not found"),
     INVALID_EMAIL_CONFIGURATION(HttpStatus.BAD_REQUEST,"Invalid Email Configuration" ),
     CONDITION_FIELD_NOT_FOUND(HttpStatus.NOT_FOUND,"Condition field not found in task output"),
+    CONDITION_BRANCH_NOT_FOUND(HttpStatus.NOT_FOUND,"condition branch not found"),
     INVALID_CONDITION_COMPARISON(HttpStatus.BAD_REQUEST, "Invalid condition comparison"),
     INVALID_CONDITION_OPERATOR(HttpStatus.BAD_REQUEST, "Unsupported condition operator");
 

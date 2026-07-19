@@ -1,7 +1,11 @@
 package com.flowforge.workflowservice.domain.execution;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.time.Instant;
 import java.util.UUID;
 
@@ -45,4 +49,9 @@ public class TaskExecution {
     private Integer retryCount = 0;
 
     private String errorMessage;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private JsonNode output;
+
 }
