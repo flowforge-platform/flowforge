@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -17,18 +18,31 @@ public class KafkaEventPublisherAdapter implements EventPublisherPort {
 
     @Override
     public void publishTaskCompleted(WorkerTask task, WorkerResult result) {
-        TaskCompletedEvent event = new TaskCompletedEvent(
-                task.getWorkflowExecutionId(),
-                task.getId(),
-                task.getNodeId(),
-                task.getType(),
-                task.getStatus(),
-                result.isSuccess(),
-                result.getMessage(),
-                task.getUpdatedAt()
-        );
-        String topic = result.isSuccess() ? KafkaTopics.TASK_SUCCEEDED : KafkaTopics.TASK_FAILED;
-        log.info("Publishing task-completed event for task {}", task.getId());
-        kafkaTemplate.send(topic, task.getId().toString(), event);
+        if(result.isSuccess()){
+            TaskSucceededEvent event=new TaskSucceededEvent(
+                    task.getWorkflowExecutionId(),
+                    task.getId(),
+                    task.getNodeId(),
+                    task.getType(),
+                    task.getStatus(),
+                    result.getMessage(),
+                    task.getUpdatedAt()
+            );
+            log.info("Publishing task-succeeded event for task {}", task.getId());
+            kafkaTemplate.send(KafkaTopics.TASK_SUCCEEDED, task.getId().toString(), event);
+        }else{
+            TaskFailedEvent event=new TaskFailedEvent(
+                    task.getWorkflowExecutionId(),
+                    task.getId(),
+                    task.getNodeId(),
+                    task.getType(),
+                    task.getStatus(),
+                    result.getMessage(),
+                    task.getUpdatedAt()
+            );
+            log.info("Publishing task-failed event for task {}", task.getId());
+            kafkaTemplate.send(KafkaTopics.TASK_FAILED, task.getId().toString(), event);
+
+        }
     }
 }

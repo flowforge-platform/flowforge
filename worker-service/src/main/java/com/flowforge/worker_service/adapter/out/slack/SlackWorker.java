@@ -5,6 +5,7 @@ import com.flowforge.worker_service.common.exception.SlackApiException;
 import com.flowforge.worker_service.domain.model.WorkerResult;
 import com.flowforge.worker_service.domain.model.WorkerTask;
 import com.flowforge.worker_service.domain.worker.WorkerHandler;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.circuitbreaker.CircuitBreaker;
@@ -36,38 +37,41 @@ public class SlackWorker implements WorkerHandler {
     }
 
     @Override
+    @Bulkhead(name = "slack", fallbackMethod = "slackFallback")
     public WorkerResult execute(WorkerTask task) {
-
         CircuitBreaker circuitBreaker = circuitBreakerFactory.create("slack");
         return circuitBreaker.run(() -> doExecute(task),throwable ->WorkerResult.failure(task.getId(), "Slack unavailable: " + throwable.getMessage()));
     }
+    private WorkerResult slackFallback(WorkerTask task,Throwable throwable){
+        return WorkerResult.failure(task.getId(), "Slack worker overloaded, try again later");
+    }
 
-        private WorkerResult doExecute(WorkerTask task){
-            SlackConfig config=null;
-            try {
-                config = objectMapper.readValue(task.getPayload(), SlackConfig.class);
-            }catch (Exception ex){
-                return WorkerResult.failure(task.getId(), "Invalid Slack config: " + ex.getMessage());
-            }
+    private WorkerResult doExecute(WorkerTask task){
+        SlackConfig config=null;
+        try {
+            config = objectMapper.readValue(task.getPayload(), SlackConfig.class);
+        }catch (Exception ex){
+            return WorkerResult.failure(task.getId(), "Invalid Slack config: " + ex.getMessage());
+        }
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setBearerAuth(botToken);
-            headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(botToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-            Map<String, Object> body = Map.of(
-                    "channel", config.channel(),
-                    "text", config.message()
-            );
+        Map<String, Object> body = Map.of(
+                "channel", config.channel(),
+                "text", config.message()
+        );
 
-            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 
-            Map response = restTemplate.postForObject(SLACK_POST_MESSAGE_URL, request, Map.class);
+        Map response = restTemplate.postForObject(SLACK_POST_MESSAGE_URL, request, Map.class);
 
-            if (response != null && Boolean.FALSE.equals(response.get("ok"))) {
-                throw new SlackApiException("Slack API error: " + response.get("error"));
-            }
+        if (response != null && Boolean.FALSE.equals(response.get("ok"))) {
+            throw new SlackApiException("Slack API error: " + response.get("error"));
+        }
 
-            return WorkerResult.success(task.getId(), "Slack message sent successfully");
+        return WorkerResult.success(task.getId(), "Slack message sent successfully");
         }
 
 }

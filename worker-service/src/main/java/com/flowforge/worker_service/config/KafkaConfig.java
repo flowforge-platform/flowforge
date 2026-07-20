@@ -21,6 +21,8 @@ import java.util.Map;
 @EnableKafka
 @EnableKafkaRetryTopic
 @Configuration
+@EnableKafka
+@EnableKafkaRetryTopic
 public class KafkaConfig {
 
     @Bean
