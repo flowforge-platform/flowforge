@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/flowforge
+    username: postgres
+    password: postgres
+  kafka:
+    bootstrap-servers: localhost:29092
+  flyway:
+    locations: filesystem:./database/migrations/worker
+
+  mail:
+    host: mailpit
+    port: 1025
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+management:
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces

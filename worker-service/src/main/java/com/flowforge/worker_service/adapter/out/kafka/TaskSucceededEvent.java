@@ -1,11 +1,12 @@
 package com.flowforge.worker_service.adapter.out.kafka;
 
+
 import com.flowforge.worker_service.domain.enums.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record TaskCompletedEvent(
+public record TaskSucceededEvent(
         UUID workflowExecutionId,
         UUID taskExecutionId,
         UUID nodeId,

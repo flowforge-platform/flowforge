@@ -3,7 +3,9 @@ package com.flowforge.worker_service.adapter.in.kafka;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowforge.worker_service.application.port.in.ExecuteTaskUseCase;
+import com.flowforge.worker_service.common.exception.HttpTargetException;
 import com.flowforge.worker_service.common.exception.NonRetryableException;
+import com.flowforge.worker_service.common.exception.SlackApiException;
 import com.flowforge.worker_service.common.exception.WorkerExecutionException;
 import com.flowforge.worker_service.domain.model.WorkerResult;
 import com.flowforge.worker_service.domain.model.WorkerTask;
@@ -28,7 +30,8 @@ public class TaskCreatedConsumer {
             backoff = @Backoff(delay = 1000, multiplier = 2),
             autoCreateTopics = "true",
             topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE,
-            include = { WorkerExecutionException.class }
+            include = { WorkerExecutionException.class, SlackApiException.class, HttpTargetException.class }
+
     )
     @KafkaListener(
             topics = "task-created",
