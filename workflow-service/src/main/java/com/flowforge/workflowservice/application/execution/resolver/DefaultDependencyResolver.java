@@ -11,12 +11,14 @@ import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowEdgeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DefaultDependencyResolver implements DependencyResolver {
 
     private final WorkflowEdgeRepository workflowEdgeRepository;
@@ -34,12 +36,18 @@ public class DefaultDependencyResolver implements DependencyResolver {
 
         for (WorkflowEdge edge : edges){
             WorkflowNode targetNode = edge.getTargetNode();
+            log.info("Edge: {} -> {}",
+                    completedNode.getNodeType(),
+                    targetNode.getNodeType());
+
             if (targetNode.getNodeType() != NodeType.CONDITION){
+                log.info("Adding non-condition node {}", targetNode.getNodeType());
                 nextNodes.add(targetNode);
                 continue;
             }
+            log.info("Evaluating CONDITION node {}", targetNode.getId());
             BranchType branch = conditionExecutionService.execute(completedTask.getOutput(),targetNode);
-
+            log.info("Branch selected: {}", branch);
             WorkflowEdge selectedEdge = workflowEdgeRepository
                     .findBySourceNodeAndBranchType(targetNode,branch)
                     .orElseThrow(() ->
@@ -47,9 +55,15 @@ public class DefaultDependencyResolver implements DependencyResolver {
                                     ErrorCode.CONDITION_BRANCH_NOT_FOUND
                             ));
 
+            log.info("Selected target: {}",
+                    selectedEdge.getTargetNode().getNodeType());
             nextNodes.add(selectedEdge.getTargetNode());
 
         }
+        log.info("Returning next nodes: {}",
+                nextNodes.stream()
+                        .map(WorkflowNode::getNodeType)
+                        .toList());
         return  nextNodes;
     }
 }
