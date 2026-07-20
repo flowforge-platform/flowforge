@@ -1,13 +1,14 @@
-
 server:
-  port: 8082
+  port: 8081
 
 spring:
   application:
     name: auth-service
 
+  profiles:
+    default: dev
+
   datasource:
-    url: jdbc:postgresql://flowforge-postgres:5432/flowforge
     username: ${DB_USER:postgres}
     password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
@@ -25,44 +26,14 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    locations: filesystem:/app/database/migrations/auth
     schemas: auth
     default-schema: auth
     create-schemas: true
 
-  mail:
-    host: flowforge-mailpit
-    port: 1025
-#    username: ${MAIL_USERNAME}
-#    password: ${MAIL_PASSWORD}
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-#            required: true
-#          ssl:
-#            trust: smtp.gmail.com
-
 app:
   base-url: ${APP_BASE_URL:http://localhost:3000}
-
   jwt:
     secret: ${JWT_SECRET:dGhpcy1pcy1hLXNlY3JldC1rZXktZm9yLWZsb3dmb3JnZS1hdXRoLXNlcnZpY2U=}
-
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://discovery-service:8761/eureka/
-    fetch-registry: true
-    register-with-eureka: true
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
-
-
 
 springdoc:
   api-docs:
@@ -74,4 +45,24 @@ logging:
   level:
     org.springdoc: DEBUG
     org.springframework.web: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      access: unrestricted
+
+  metrics:
+    enable:
+      all: true
+
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
 

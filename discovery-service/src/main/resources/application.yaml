@@ -4,12 +4,31 @@ server:
 spring:
   application:
     name: discovery-service
-
+  profile:
+    default: dev
 eureka:
-  instance:
-    hostname: localhost
   client:
     register-with-eureka: false
     fetch-registry: false
   server:
     wait-time-in-ms-when-sync-empty: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      access: unrestricted
+
+  metrics:
+    enable:
+      all: true
+
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
