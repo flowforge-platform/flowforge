@@ -9,7 +9,7 @@ spring:
     locations: filesystem:./database/migrations/worker
 
   mail:
-    host: mailpit
+    host: localhost
     port: 1025
 
 eureka:

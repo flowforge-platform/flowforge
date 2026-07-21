@@ -2,11 +2,13 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: workflow-service-deployment
+  name: workflow-service
   labels:
     app: workflow-service
 
 spec:
+  replicas: 1
+
   selector:
     matchLabels:
       app: workflow-service
@@ -17,10 +19,11 @@ spec:
         app: workflow-service
     spec:
       containers:
-        - name: nginx
-          image: nginx:latest
+        - name: workflow-service
+          image: anzyl/workflow-service:v1
+          imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 8082
 
-  replicas: 1
+
 

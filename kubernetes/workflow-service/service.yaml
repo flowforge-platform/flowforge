@@ -6,11 +6,11 @@ metadata:
 
 spec:
   selector:
-    app: nginx
+    app: workflow-service
 
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 8082
+      targetPort: 8082
 
   type: ClusterIP

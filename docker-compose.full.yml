@@ -6,7 +6,7 @@ services:
     ports:
       - "8761:8761"
     environment:
-      SPRING_PROFILE_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: docker
 
   api-gateway:
     image: aswinrj/api-gateway
@@ -17,7 +17,7 @@ services:
     ports:
       - "8888:8888"
     environment:
-      SPRING_PROFILE_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: docker
 
   auth-service:
     image: aswinrj/auth-service
@@ -30,7 +30,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_PROFILE_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: docker
     volumes:
       - ./database/migrations:/app/database/migrations
 
@@ -61,6 +61,6 @@ services:
       - "8083:8083"
     environment:
       SLACK_BOT_TOKEN: ${SLACK_BOT_TOKEN}
-      SPRING_PROFILE_ACTIVE: docker
+      SPRING_PROFILES_ACTIVE: docker
     volumes:
       - ./database/migrations:/app/database/migrations
