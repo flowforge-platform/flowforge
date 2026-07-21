@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   discovery-service:
     image: aswinrj/discovery-service
@@ -37,9 +35,7 @@ services:
       - ./database/migrations:/app/database/migrations
 
   workflow-service:
-    build:
-      context: ./workflow-service
-    image: workflow-service:local
+    image: anzyl/workflow-service:v1
     container_name: workflow-service
     ports:
       - "8082:8082"

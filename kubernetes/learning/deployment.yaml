@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: workflow-service-deployment
+  labels:
+    app: workflow-service
+
+spec:
+  selector:
+    matchLabels:
+      app: workflow-service
+
+  template:
+    metadata:
+      labels:
+        app: workflow-service
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+  replicas: 1
+
