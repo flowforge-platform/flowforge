@@ -45,6 +45,9 @@ services:
       - default
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://db:5432/flowforge
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
     volumes:
       - ./database:/app/database
 
