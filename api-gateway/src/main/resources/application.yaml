@@ -68,8 +68,16 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
     prometheus:
       access: unrestricted
+
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
 
   metrics:
     enable:
