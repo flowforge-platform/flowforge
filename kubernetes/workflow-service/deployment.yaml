@@ -28,14 +28,11 @@ spec:
             - name: SPRING_PROFILES_ACTIVE
               value: docker
 
-            - name: DB_URL
-              value: jdbc:postgresql://postgres:5432/flowforge
-
-            - name: DB_USERNAME
-              value: postgres
-
-            - name: DB_PASSWORD
-              value: postgres
+          envFrom:
+            - configMapRef:
+                name: workflow-config
+            - secretRef:
+                name: workflow-secret
 
 
 
