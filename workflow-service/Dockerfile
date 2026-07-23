@@ -2,7 +2,7 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY workflow-service/target/*.jar app.jar
 
 COPY database /app/database
 
