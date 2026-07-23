@@ -24,13 +24,23 @@ spec:
               protocol: TCP
           env:
             - name: POSTGRES_DB
-              value: flowforge
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: database
 
             - name: POSTGRES_USER
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
 
             - name: POSTGRES_PASSWORD
-              value: postgres
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
