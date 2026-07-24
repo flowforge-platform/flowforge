@@ -1,7 +1,8 @@
-export default function Profile(){
-    return (
-        <>
-        <h1>Profile</h1>
-        </>
-    )
+import ProfileView from "@/components/profile/ProfileView";
+import { getProfile } from "@/lib/api/profile";
+
+export default async function ProfilePage() {
+  const profile = await getProfile();
+
+  return <ProfileView profile={profile} />;
 }

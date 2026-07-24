@@ -14,6 +14,7 @@ import {
   User,
   Workflow,
 } from "lucide-react";
+import { useAuth } from "../workflow-builder/hooks/useAuth";
 
 const mainLinks = [
   { label: "Dashboard", href: "/dashboard", icon: Grid2X2 },
@@ -29,8 +30,11 @@ const bottomLinks = [
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
+
 export default function Sidebar() {
   const pathname = usePathname();
+  const {logout} = useAuth();
+
 
   return (
     <aside className="flex min-h-screen w-[280px] shrink-0 flex-col border-r border-white/[0.03] bg-[#1b1b1d] px-4 py-9 text-[#c9c5d5]">
@@ -109,6 +113,7 @@ export default function Sidebar() {
           <button
             type="button"
             className="flex h-8 w-full items-center gap-4 px-8 font-mono text-sm font-semibold tracking-[0.08em] text-[#e5a19d] transition-colors hover:text-[#ffc3bf]"
+            onClick={logout}
           >
             <LogOut size={20} strokeWidth={2} />
             <span>Logout</span>
