@@ -1,12 +1,23 @@
 package com.flowforge.worker_service.domain.model;
 
 import com.flowforge.worker_service.domain.enums.TaskStatus;
-import java.time.LocalDateTime;
+import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class WorkerTask {
-    private String id;
-    private String workflowExecutionId;
-    private String nodeId;
+    private UUID id;
+    private UUID workflowExecutionId;
+    private UUID nodeId;
     private String type;
     private String payload;
     private TaskStatus status;
@@ -15,9 +26,9 @@ public class WorkerTask {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public WorkerTask() {}
 
-    public WorkerTask(String id, String workflowExecutionId, String nodeId, String type, String payload) {
+
+    public WorkerTask(UUID id, UUID workflowExecutionId, UUID nodeId, String type, String payload) {
         this.id = id;
         this.workflowExecutionId = workflowExecutionId;
         this.nodeId = nodeId;
@@ -34,7 +45,7 @@ public class WorkerTask {
     }
 
     public void markDone(String result) {
-        this.status = TaskStatus.DONE;
+        this.status = TaskStatus.SUCCESS;
         this.result = result;
         this.updatedAt = LocalDateTime.now();
     }
@@ -45,25 +56,4 @@ public class WorkerTask {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public String getId() { return id; }
-    public String getWorkflowExecutionId() { return workflowExecutionId; }
-    public String getNodeId() { return nodeId; }
-    public String getType() { return type; }
-    public String getPayload() { return payload; }
-    public TaskStatus getStatus() { return status; }
-    public String getResult() { return result; }
-    public String getError() { return error; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-
-    public void setId(String id) { this.id = id; }
-    public void setWorkflowExecutionId(String workflowExecutionId) { this.workflowExecutionId = workflowExecutionId; }
-    public void setNodeId(String nodeId) { this.nodeId = nodeId; }
-    public void setType(String type) { this.type = type; }
-    public void setPayload(String payload) { this.payload = payload; }
-    public void setStatus(TaskStatus status) { this.status = status; }
-    public void setResult(String result) { this.result = result; }
-    public void setError(String error) { this.error = error; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

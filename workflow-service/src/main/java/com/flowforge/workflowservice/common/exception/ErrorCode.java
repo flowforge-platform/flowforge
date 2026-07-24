@@ -22,7 +22,11 @@ public enum ErrorCode {
     INVALID_WORKFLOW_DEFINITION(HttpStatus.BAD_REQUEST,"Workflow definition contains invalid node references"),
     WORKFLOW_CANNOT_BE_MODIFIED(HttpStatus.CONFLICT,"Published workflows cannot be modified"),
     WORKFLOW_NOT_PUBLISHED(HttpStatus.CONFLICT,"workflow must be published before execution"),
-    WORKFLOW_EXECUTION_NOT_FOUND(HttpStatus.NOT_FOUND,"workflow execution not found");
+    WORKFLOW_EXECUTION_NOT_FOUND(HttpStatus.NOT_FOUND,"workflow execution not found"),
+    INVALID_WORKFLOW_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "Invalid workflow execution state transition"),
+    INVALID_TASK_STATE_TRANSITION(HttpStatus.BAD_REQUEST, "Invalid task execution state transition"),
+    TASK_EXECUTION_NOT_FOUND(HttpStatus.NOT_FOUND, "Task execution not found"),
+    INVALID_EMAIL_CONFIGURATION(HttpStatus.BAD_REQUEST,"Invalid Email Configuration" );
 
     private final HttpStatus status;
     private final String message;

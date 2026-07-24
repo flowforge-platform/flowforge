@@ -8,12 +8,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class UserPrincipal implements UserDetails {
 
-    private final String id;
+    private final UUID id;
     private final String email;
-    private final String organizationId;
+    private final UUID organizationId;
     private final Role role;
 
     public UserPrincipal(User user){
@@ -37,10 +38,10 @@ public class UserPrincipal implements UserDetails {
     public String getUsername() {
         return email;
     }
-    public String getId() {
+    public UUID getId() {
         return id;
     }
-    public String getOrganizationId() {
+    public UUID getOrganizationId() {
         return organizationId;
     }
 }

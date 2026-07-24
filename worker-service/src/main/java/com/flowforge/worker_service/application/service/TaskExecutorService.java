@@ -20,7 +20,6 @@ public class TaskExecutorService implements ExecuteTaskUseCase {
     private final EventPublisherPort eventPublisherPort;
 
     @Override
-    @Transactional
     public WorkerResult execute(WorkerTask task) {
         try {
             task.markRunning();

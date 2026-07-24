@@ -19,6 +19,9 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+    schemas: worker
+    default-schema: worker
+    create-schemas: true
 
   kafka:
     bootstrap-servers: flowforge-kafka:29092
@@ -34,7 +37,7 @@ spring:
         spring.json.trusted.packages: "*"
 
   mail:
-    host: localhost
+    host: mailpit
     port: 1025
 eureka:
   client:

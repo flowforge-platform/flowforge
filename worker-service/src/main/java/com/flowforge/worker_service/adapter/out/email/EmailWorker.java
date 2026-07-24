@@ -25,7 +25,6 @@ public class EmailWorker implements WorkerHandler {
     public WorkerResult execute(WorkerTask task) {
         try {
             EmailConfig config = objectMapper.readValue(task.getPayload(), EmailConfig.class);
-
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(config.to());
             message.setSubject(config.subject());

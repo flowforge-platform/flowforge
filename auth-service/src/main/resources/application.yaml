@@ -20,10 +20,15 @@ spring:
     properties:
       hibernate:
         format_sql: true
+        default_schema: auth
 
   flyway:
     enabled: true
     baseline-on-migrate: true
+    locations: filesystem:/app/database/migrations
+    schemas: auth
+    default-schema: auth
+    create-schemas: true
 
   mail:
     host: flowforge-mailpit
