@@ -2,6 +2,9 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { registerOrg } from "@/lib/api/auth";
+import { useAuthStore } from "@/lib/stores/auth-store";
+
 import {
   Check,
   CircleCheck,
@@ -41,6 +44,10 @@ export default function Register() {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [serverError, setServerError] = useState("")
+
+  const {setTokens} = useAuthStore();
+
 
   const validateForm = () => {
     const nextErrors: FormErrors = {};
@@ -76,15 +83,59 @@ export default function Register() {
       nextErrors.terms = "You must agree before creating an account.";
     }
 
+    if (password.length < 8) {
+      nextErrors.password = "Password must be at least 8 characters.";
+    }
+    
+    if (!workspace.trim()) {
+      nextErrors.workspace = "Workspace name is required.";
+    }
+    
+    if (!fullName.trim()) {
+      nextErrors.fullName = "Full name is required.";
+    }
+
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (validateForm()) {
-      router.push("/dashboard");
+    if (password !== confirmPassword) {
+      setErrors({
+        confirmPassword: "Passwords do not match",
+      });
+      return;
+    }
+
+    try {
+      const response = await registerOrg({
+        organizationName: workspace,
+        fullName,
+        email,
+        password,
+      });
+
+      if (!response.success || !response.data) {
+        setServerError(response.message);
+        return;
+      }
+
+      setTokens(
+        response.data.accessToken,
+        response.data.refreshToken,
+        response.data.tokenType
+      );
+
+      router.replace("/dashboard");
+    } catch (error: any) {
+      console.log("Status:", error.response?.status);
+      console.log("Response:", error.response?.data);
+
+      setServerError(
+        error.response?.data?.message ?? "Registration failed."
+      );
     }
   };
 

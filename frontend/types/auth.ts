@@ -14,8 +14,15 @@ export interface ApiResponse<T> {
   success: boolean;
   message: string;
   data: T;
-  errors: string | null;
+  errors: Record<string, string> | null;
   timestamp: string;
+}
+
+export interface RegisterRequest {
+  organizationName: string;
+  fullName: string;
+  email: string;
+  password: string;
 }
 
 export type LoginResponse = ApiResponse<AuthData>;

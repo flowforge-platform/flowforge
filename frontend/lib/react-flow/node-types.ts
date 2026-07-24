@@ -7,3 +7,15 @@ export const nodeTypes = {
   httpRequest: HttpRequestNode,
   condition: ConditionNode
 };
+
+export type ExecutionNodeStatus =
+  | "SUCCESS"
+  | "RUNNING"
+  | "WAITING"
+  | "FAILED"
+  | "IDLE";
+
+export interface WorkflowNodeData {
+  label: string;
+  executionStatus?: ExecutionNodeStatus;
+}

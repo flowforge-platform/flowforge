@@ -85,7 +85,7 @@ export default function Login() {
         response.data.tokenType
       );
 
-      router.replace("/dashboard");
+      router.replace("/workflows");
     } catch (error) {
       setServerError("Something went wrong. Please try again.");
     } finally {

@@ -30,10 +30,11 @@ const bottomLinks = [
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
-const {logout} = useAuth();
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const {logout} = useAuth();
+
 
   return (
     <aside className="flex min-h-screen w-[280px] shrink-0 flex-col border-r border-white/[0.03] bg-[#1b1b1d] px-4 py-9 text-[#c9c5d5]">
