@@ -120,9 +120,9 @@ public class ExecutionEngine {
                 taskExecutionRepository.findById(event.taskExecutionId())
                         .orElseThrow(() ->
                                 new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
-
+        WorkflowExecution workflowExecution = taskExecution.getWorkflowExecution();
         taskStateMachine.failTaskExecution(taskExecution, event.message());
         workflowStateMachine.failWorkflowExecution(taskExecution.getWorkflowExecution(),taskExecution.getErrorMessage());
-        workflowExecutionRepository.save(taskExecution.getWorkflowExecution());
+        workflowExecutionRepository.save(workflowExecution);
     }
 }
