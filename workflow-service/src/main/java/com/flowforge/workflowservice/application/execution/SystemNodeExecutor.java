@@ -11,16 +11,12 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class SystemNodeExecutor {
     private final TaskStateMachine taskStateMachine;
-
     public void execute(TaskExecution taskExecution) {
 
         log.info("Executing system node {}",
                 taskExecution.getNode().getNodeType());
-
         taskStateMachine.startTaskExecution(taskExecution);
-
         taskStateMachine.completeTaskExecution(taskExecution);
-
         log.info("Completed system node {}",
                 taskExecution.getNode().getNodeType());
 

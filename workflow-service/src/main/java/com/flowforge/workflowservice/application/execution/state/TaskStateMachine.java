@@ -4,19 +4,14 @@ import com.flowforge.workflowservice.common.exception.BusinessException;
 import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.TaskExecution;
 import com.flowforge.workflowservice.domain.execution.TaskExecutionStatus;
-import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
-@Service
-@RequiredArgsConstructor
+@Component
 @Slf4j
 public class TaskStateMachine {
-    private final TaskExecutionRepository taskExecutionRepository;
-
     public void startTaskExecution(TaskExecution task) {
 
         if (task.getStatus() != TaskExecutionStatus.PENDING) {
@@ -24,8 +19,6 @@ public class TaskStateMachine {
         }
         task.setStatus(TaskExecutionStatus.RUNNING);
         task.setStartedAt(Instant.now());
-
-        taskExecutionRepository.save(task);
     }
     public void completeTaskExecution(TaskExecution task) {
         if (task.getStatus() != TaskExecutionStatus.RUNNING) {
@@ -33,8 +26,6 @@ public class TaskStateMachine {
         }
         task.setStatus(TaskExecutionStatus.SUCCESS);
         task.setCompletedAt(Instant.now());
-
-        taskExecutionRepository.save(task);
     }
 
     public void failTaskExecution(
@@ -49,6 +40,5 @@ public class TaskStateMachine {
         task.setCompletedAt(Instant.now());
         task.setErrorMessage(error);
 
-        taskExecutionRepository.save(task);
     }
 }

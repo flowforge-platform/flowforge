@@ -80,7 +80,7 @@ public class ExecutionEngine {
                                         new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
 
                 systemNodeExecutor.execute(nextTask);
-
+                taskExecutionRepository.save(nextTask);
                 handleTaskCompleted(nextTask);
 
             } else {
@@ -110,7 +110,7 @@ public class ExecutionEngine {
                                 new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
 
         taskStateMachine.completeTaskExecution(taskExecution);
-
+        taskExecutionRepository.save(taskExecution);
         handleTaskCompleted(taskExecution);
     }
 
@@ -120,9 +120,10 @@ public class ExecutionEngine {
                 taskExecutionRepository.findById(event.taskExecutionId())
                         .orElseThrow(() ->
                                 new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
-
+        WorkflowExecution workflowExecution = taskExecution.getWorkflowExecution();
         taskStateMachine.failTaskExecution(taskExecution, event.message());
-        workflowStateMachine.failWorkflowExecution(taskExecution.getWorkflowExecution(),taskExecution.getErrorMessage());
-        workflowExecutionRepository.save(taskExecution.getWorkflowExecution());
+        taskExecutionRepository.save(taskExecution);
+        workflowStateMachine.failWorkflowExecution(workflowExecution,taskExecution.getErrorMessage());
+        workflowExecutionRepository.save(workflowExecution);
     }
 }

@@ -1,16 +1,14 @@
 package com.flowforge.workflowservice.application.execution.resolver;
 
-import com.flowforge.workflowservice.application.execution.scheduler.NodeScheduler;
 import com.flowforge.workflowservice.domain.edge.WorkflowEdge;
 import com.flowforge.workflowservice.domain.execution.WorkflowExecution;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowEdgeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
+import org.springframework.stereotype.Component;
 import java.util.List;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class DefaultDependencyResolver implements DependencyResolver {
 

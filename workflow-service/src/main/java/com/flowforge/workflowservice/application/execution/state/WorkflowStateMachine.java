@@ -4,15 +4,12 @@ import com.flowforge.workflowservice.common.exception.BusinessException;
 import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.WorkflowExecution;
 import com.flowforge.workflowservice.domain.execution.WorkflowExecutionStatus;
-import com.flowforge.workflowservice.infrastructure.persistence.WorkflowExecutionRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
 @Component
-@RequiredArgsConstructor
 @Slf4j
 public class WorkflowStateMachine {
 
