@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/select";
 
 import { GeneralSettings as GeneralSettingsType } from "@/types/settings";
+import SettingsSection from "./SettingsSection";
 
 interface GeneralSettingsProps {
   general: GeneralSettingsType;
@@ -18,22 +19,12 @@ export default function GeneralSettings({
   general,
 }: GeneralSettingsProps) {
   return (
-    <section
+    <SettingsSection
       id="general"
-      className="rounded-xl border bg-card p-6"
-    >
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">
-          General
-        </h2>
-
-        <p className="text-sm text-muted-foreground">
-          Configure your workspace preferences.
-        </p>
-      </div>
+      title="General"
+      description="Configure your workspace preferences.">
 
       <div className="space-y-6">
-        {/* Theme */}
 
         <div className="space-y-2">
           <label className="text-sm font-medium">
@@ -117,6 +108,6 @@ export default function GeneralSettings({
           </Select>
         </div>
       </div>
-    </section>
+    </SettingsSection>
   );
 }

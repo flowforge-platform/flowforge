@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { ApiSettings as ApiSettingsType } from "@/types/settings";
+import SettingsSection from "./SettingsSection";
 
 interface ApiSettingsProps {
   api: ApiSettingsType;
@@ -20,19 +21,11 @@ export default function ApiSettings({
   api,
 }: ApiSettingsProps) {
   return (
-    <section
-      id="api"
-      className="rounded-xl border bg-card p-6"
-    >
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">
-          API & Webhooks
-        </h2>
 
-        <p className="text-sm text-muted-foreground">
-          Manage API credentials and webhook configuration.
-        </p>
-      </div>
+    <SettingsSection
+      id="api"
+      title="API & Webhooks"
+      description="Manage API credentials and webhook configuration.">
 
       <div className="space-y-6">
 
@@ -104,6 +97,6 @@ export default function ApiSettings({
         </div>
 
       </div>
-    </section>
+    </SettingsSection>
   );
 }
