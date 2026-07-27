@@ -3,6 +3,7 @@
 import { Switch } from "@/components/ui/switch";
 
 import { NotificationSetting } from "@/types/settings";
+import SettingsSection from "./SettingsSection";
 
 interface NotificationSettingsProps {
   notifications: NotificationSetting[];
@@ -12,19 +13,10 @@ export default function NotificationSettings({
   notifications,
 }: NotificationSettingsProps) {
   return (
-    <section
+    <SettingsSection
       id="notifications"
-      className="rounded-xl border bg-card p-6"
-    >
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">
-          Notifications
-        </h2>
-
-        <p className="text-sm text-muted-foreground">
-          Choose which events should notify you.
-        </p>
-      </div>
+      title="Notifications"
+      description="Choose which events should notify you.">
 
       <div className="space-y-6">
         {notifications.map((notification) => (
@@ -48,6 +40,6 @@ export default function NotificationSettings({
           </div>
         ))}
       </div>
-    </section>
+    </SettingsSection>
   );
 }

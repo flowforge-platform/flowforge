@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 
 import { ExecutionSettings as ExecutionSettingsType } from "@/types/settings";
+import SettingsSection from "./SettingsSection";
 
 interface ExecutionSettingsProps {
   execution: ExecutionSettingsType;
@@ -20,19 +21,10 @@ export default function ExecutionSettings({
   execution,
 }: ExecutionSettingsProps) {
   return (
-    <section
+    <SettingsSection
       id="execution"
-      className="rounded-xl border bg-card p-6"
-    >
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">
-          Execution Preferences
-        </h2>
-
-        <p className="text-sm text-muted-foreground">
-          Configure how workflow executions are monitored.
-        </p>
-      </div>
+      title="Execution Preferences"
+      description="Configure how workflow executions are monitored.">
 
       <div className="space-y-6">
 
@@ -95,6 +87,6 @@ export default function ExecutionSettings({
         </div>
 
       </div>
-    </section>
+    </SettingsSection>
   );
 }

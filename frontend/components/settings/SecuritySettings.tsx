@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 
 import { SecuritySettings as SecuritySettingsType } from "@/types/settings";
+import SettingsSection from "./SettingsSection";
 
 interface SecuritySettingsProps {
   security: SecuritySettingsType;
@@ -15,19 +16,10 @@ export default function SecuritySettings({
   security,
 }: SecuritySettingsProps) {
   return (
-    <section
+    <SettingsSection
       id="security"
-      className="rounded-xl border bg-card p-6"
-    >
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold">
-          Security
-        </h2>
-
-        <p className="text-sm text-muted-foreground">
-          Manage authentication and account security.
-        </p>
-      </div>
+      title="security"
+      description="Manage authentication and account security.">
 
       <div className="space-y-6">
 
@@ -35,7 +27,7 @@ export default function SecuritySettings({
 
         <div className="flex items-center justify-between gap-6">
           <div>
-            <h3 className="font-medium">
+            <h3 className="font-medium">3
               Two-Factor Authentication
             </h3>
 
@@ -84,6 +76,6 @@ export default function SecuritySettings({
         </div>
 
       </div>
-    </section>
+    </SettingsSection>
   );
 }
