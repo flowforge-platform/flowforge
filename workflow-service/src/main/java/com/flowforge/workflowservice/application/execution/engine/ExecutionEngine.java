@@ -110,7 +110,7 @@ public class ExecutionEngine {
                                 new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
 
         taskStateMachine.completeTaskExecution(taskExecution);
-
+        taskExecutionRepository.save(taskExecution);
         handleTaskCompleted(taskExecution);
     }
 
@@ -122,6 +122,7 @@ public class ExecutionEngine {
                                 new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
         WorkflowExecution workflowExecution = taskExecution.getWorkflowExecution();
         taskStateMachine.failTaskExecution(taskExecution, event.message());
+        taskExecutionRepository.save(taskExecution);
         workflowStateMachine.failWorkflowExecution(taskExecution.getWorkflowExecution(),taskExecution.getErrorMessage());
         workflowExecutionRepository.save(workflowExecution);
     }
