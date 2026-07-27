@@ -6,7 +6,7 @@ on:
       - feature/discovery-service
     paths:
       - "discovery-service/**"
-      - ".github/workflows/discovery-service.yml"
+      - ".github/workflows/discovery-service.yaml"
 
 permissions:
   contents: read

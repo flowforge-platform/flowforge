@@ -130,3 +130,4 @@ volumes:
   postgres_data:
   kafka_data:
   elasticsearch-data:
+  grafana_data:

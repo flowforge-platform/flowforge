@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flowforge-redis
+  namespace: flowforge
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: flowforge-redis
+
+  template:
+    metadata:
+      labels:
+        app: flowforge-redis
+
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+
+          ports:
+            - containerPort: 6379
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            periodSeconds: 5
