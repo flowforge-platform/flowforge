@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: workflow-config
+
+data:
+  DB_URL: jdbc:postgresql://postgres:5432/flowforge
+
+  KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+
+  EUREKA_URL: http://discovery-service:8761/eureka/
+
+  JAEGER_ENDPOINT: http://jaeger:4318/v1/traces
+
+  SPRING_PROFILES_ACTIVE: docker
+

@@ -10,9 +10,11 @@ import com.flowforge.workflowservice.application.execution.state.WorkflowStateMa
 import com.flowforge.workflowservice.common.exception.BusinessException;
 import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.TaskExecution;
+import com.flowforge.workflowservice.domain.execution.WorkflowExecution;
 import com.flowforge.workflowservice.domain.node.NodeType;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
+import com.flowforge.workflowservice.infrastructure.persistence.WorkflowExecutionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class ExecutionEngine {
     private final NodeScheduler nodeScheduler;
     private final TaskStateMachine taskStateMachine;
     private final SystemNodeExecutor systemNodeExecutor;
+    private final WorkflowExecutionRepository workflowExecutionRepository;
 
     @Transactional
     public void handleTaskCompleted(TaskExecution taskExecution) {
@@ -50,9 +53,11 @@ public class ExecutionEngine {
         );
 
         if (runnableNodes.isEmpty()) {
+            WorkflowExecution workflowExecution = taskExecution.getWorkflowExecution();
             workflowStateMachine.completeWorkflowExecution(
-                    taskExecution.getWorkflowExecution()
+                    workflowExecution
             );
+            workflowExecutionRepository.save(workflowExecution);
             log.info(
                     "WorkflowExecution={} completed successfully",
                     taskExecution.getWorkflowExecution().getId()
@@ -118,5 +123,6 @@ public class ExecutionEngine {
 
         taskStateMachine.failTaskExecution(taskExecution, event.message());
         workflowStateMachine.failWorkflowExecution(taskExecution.getWorkflowExecution(),taskExecution.getErrorMessage());
+        workflowExecutionRepository.save(taskExecution.getWorkflowExecution());
     }
 }

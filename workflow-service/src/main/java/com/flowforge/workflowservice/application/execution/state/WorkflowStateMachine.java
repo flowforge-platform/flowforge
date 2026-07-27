@@ -7,15 +7,14 @@ import com.flowforge.workflowservice.domain.execution.WorkflowExecutionStatus;
 import com.flowforge.workflowservice.infrastructure.persistence.WorkflowExecutionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 
-@Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class WorkflowStateMachine {
-    private final WorkflowExecutionRepository workflowExecutionRepository;
 
     public void startWorkflowExecution(WorkflowExecution execution) {
         if (execution.getStatus() != WorkflowExecutionStatus.PENDING) {
@@ -43,7 +42,6 @@ public class WorkflowStateMachine {
         execution.setStatus(WorkflowExecutionStatus.COMPLETED);
         execution.setCompletedAt(Instant.now());
 
-        workflowExecutionRepository.save(execution);
     }
 
     public void failWorkflowExecution(
@@ -57,7 +55,6 @@ public class WorkflowStateMachine {
         execution.setStatus(WorkflowExecutionStatus.FAILED);
         execution.setCompletedAt(Instant.now());
 
-        workflowExecutionRepository.save(execution);
 
         log.error(
                 "Workflow {} failed : {}",
