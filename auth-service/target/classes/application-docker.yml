@@ -1,18 +1,18 @@
 spring:
   datasource:
-    url: jdbc:postgresql://flowforge-postgres:5432/flowforge
+    url: ${DB_URL}
 
   flyway:
-    locations: filesystem:/app/database/migrations/auth
+    locations: ${FLYWAY_LOCATIONS}
 
   mail:
-    host: flowforge-mailpit
-    port: 1025
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
 
 eureka:
   client:
     service-url:
-      defaultZone: http://discovery-service:8761/eureka/
+      defaultZone: ${EUREKA_URL}
     fetch-registry: true
     register-with-eureka: true
   instance:
@@ -22,4 +22,4 @@ eureka:
 management:
   otlp:
     tracing:
-      endpoint: http://jaeger:4318/v1/traces
+      endpoint: ${JAEGER_ENDPOINT}

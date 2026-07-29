@@ -31,6 +31,20 @@ services:
       - "8081:8081"
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      DB_URL: jdbc:postgresql://flowforge-postgres:5432/flowforge
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+
+      FLYWAY_LOCATIONS: filesystem:/app/database/migrations/auth
+
+      MAIL_HOST: flowforge-mailpit
+      MAIL_PORT: 1025
+
+      EUREKA_URL: http://discovery-service:8761/eureka/
+
+      JAEGER_ENDPOINT: http://jaeger:4318/v1/traces
+
+      JWT_SECRET: dGhpcy1pcy1hLXNlY3JldC1rZXktZm9yLWZsb3dmb3JnZS1hdXRoLXNlcnZpY2U=
     volumes:
       - ./database/migrations:/app/database/migrations
 
