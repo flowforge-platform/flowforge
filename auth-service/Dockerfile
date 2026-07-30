@@ -2,7 +2,9 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY auth-service/target/*.jar app.jar
+
+COPY database /app/database
 
 EXPOSE 8082
 

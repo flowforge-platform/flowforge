@@ -33,7 +33,7 @@ spring:
 app:
   base-url: ${APP_BASE_URL:http://localhost:3000}
   jwt:
-    secret: ${JWT_SECRET:dGhpcy1pcy1hLXNlY3JldC1rZXktZm9yLWZsb3dmb3JnZS1hdXRoLXNlcnZpY2U=}
+    secret: ${JWT_SECRET}
 
 springdoc:
   api-docs:
@@ -54,8 +54,15 @@ management:
   endpoint:
     health:
       show-details: always
+      probes:
+        enabled: true
     prometheus:
       access: unrestricted
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
 
   metrics:
     enable:

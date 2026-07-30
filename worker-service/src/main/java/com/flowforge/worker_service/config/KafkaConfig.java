@@ -18,8 +18,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.HashMap;
 import java.util.Map;
-@EnableKafka
-@EnableKafkaRetryTopic
 @Configuration
 @EnableKafka
 @EnableKafkaRetryTopic
