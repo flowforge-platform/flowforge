@@ -26,8 +26,12 @@ spec:
 
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: docker
-
+              value: k8s
+          envFrom:
+            - configMapRef:
+                name: api-gateway-config
+            - secretRef:
+                name: api-gateway-secret
           readinessProbe:
             httpGet:
               path: /actuator/health

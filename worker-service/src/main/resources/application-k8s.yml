@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+
+  flyway:
+    locations: ${FLYWAY_LOCATIONS}
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+
+management:
+  otlp:
+    tracing:
+      endpoint: ${JAEGER_ENDPOINT}

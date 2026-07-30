@@ -2,9 +2,9 @@ FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY worker-service/target/*.jar app.jar
 
-ENV SPRING_PROFILES_ACTIVE=docker
+COPY database /app/database
 
 EXPOSE 8084
 

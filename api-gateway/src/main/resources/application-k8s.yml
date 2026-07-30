@@ -1,0 +1,15 @@
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT:6379}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+
+management:
+  otlp:
+    tracing:
+      endpoint: ${JAEGER_ENDPOINT}
