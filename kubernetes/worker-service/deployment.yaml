@@ -3,6 +3,8 @@ kind: Deployment
 
 metadata:
   name: worker-service
+  labels:
+    app: worker-service
 
 spec:
   replicas: 1
@@ -19,24 +21,26 @@ spec:
     spec:
       containers:
         - name: worker-service
-          image: aswinrj/worker-service
+          image: aswinrj/worker-service:latest
+          imagePullPolicy: Always
 
           ports:
             - containerPort: 8083
 
           env:
             - name: SPRING_PROFILES_ACTIVE
-              value: docker
+              value: k8s
 
-            - name: SLACK_BOT_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: worker-service-secret
-                  key: slack-bot-token
+          envFrom:
+            - configMapRef:
+                name: worker-service-config
+
+            - secretRef:
+                name: worker-service-secret
 
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/readiness
               port: 8083
             initialDelaySeconds: 20
             periodSeconds: 10
@@ -45,9 +49,22 @@ spec:
 
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/liveness
               port: 8083
             initialDelaySeconds: 30
             periodSeconds: 20
             timeoutSeconds: 3
             failureThreshold: 3
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+
+            limits:
+              cpu: "500m"
+              memory: "1Gi"
+
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false

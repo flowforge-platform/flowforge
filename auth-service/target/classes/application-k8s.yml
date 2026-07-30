@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+
+  flyway:
+    locations: ${FLYWAY_LOCATIONS}
+
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_URL}
+    fetch-registry: true
+    register-with-eureka: true
+
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}
+
+management:
+  otlp:
+    tracing:
+      endpoint: ${JAEGER_ENDPOINT}

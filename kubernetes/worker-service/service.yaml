@@ -3,13 +3,17 @@ kind: Service
 
 metadata:
   name: worker-service
+  labels:
+    app: worker-service
 
 spec:
   selector:
     app: worker-service
 
   ports:
-    - port: 8083
+    - name: http
+      protocol: TCP
+      port: 8083
       targetPort: 8083
 
   type: ClusterIP

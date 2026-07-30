@@ -58,7 +58,7 @@ eureka:
     instance-id: ${spring.application.name}:${server.port}
 app:
   jwt:
-    secret: dGhpcy1pcy1hLXNlY3JldC1rZXktZm9yLWZsb3dmb3JnZS1hdXRoLXNlcnZpY2U=
+    secret: ${JWT_SECRET:dGhpcy1pcy1hLXNlY3JldC1rZXktZm9yLWZsb3dmb3JnZS1hdXRoLXNlcnZpY2U=}
 
 management:
   endpoints:

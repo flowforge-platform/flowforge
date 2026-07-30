@@ -61,5 +61,8 @@ spec:
             runAsNonRoot: true
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: false
+          envFrom:
+            - configMapRef:
+                name: discovery-config
 
       restartPolicy: Always
