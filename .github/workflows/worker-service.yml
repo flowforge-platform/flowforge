@@ -6,7 +6,7 @@ on:
       - feature/worker-service
     paths:
       - "worker-service/**"
-      - ".github/workflows/worker-service.yaml"
+      - ".github/workflows/worker-daemonSet.yaml"
 
 permissions:
   contents: read

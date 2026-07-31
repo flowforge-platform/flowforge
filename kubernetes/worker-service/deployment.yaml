@@ -66,5 +66,4 @@ spec:
               memory: "1Gi"
 
           securityContext:
-            runAsNonRoot: true
             allowPrivilegeEscalation: false
