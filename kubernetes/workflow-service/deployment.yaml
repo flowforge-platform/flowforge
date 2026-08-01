@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: workflow-service
-          image: anzyl/workflow-service:v2
+          image: anzyl/workflow-service:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8082
