@@ -2,9 +2,20 @@ import {create} from "zustand"
 import { Edge, Node, XYPosition } from "@xyflow/react";
 import { initialNodes, initialEdges } from "../react-flow/initial-workflow";
 import { createNode } from "../react-flow/node-factory";
-import { Workflow, WorkflowNodeType } from "@/types/workflow";
+import { Workflow } from "@/types/workflow";
+import { WorkflowNodeType } from "@/types/workflow-definition";
 
 type NodeType = "start" | "httpRequest" | "condition";
+
+interface ExportedWorkflow {
+  id: string;
+  name: string;
+  description: string;
+  nodes: Node[];
+  edges: Edge[];
+  createdAt: string;
+  updatedAt: string;
+}
 
 type WorkflowStore = {
     nodes: Node[];
@@ -49,9 +60,9 @@ type WorkflowStore = {
 
     duplicateNode: (id:string) => void;
     
-    exportWorkflow: ()=> Workflow;
+    exportWorkflow: ()=> ExportedWorkflow;
 
-    importWorkflow: (workflow:Workflow) => void;
+    importWorkflow: (workflow:ExportedWorkflow) => void;
 
     resetWorkflow: ()=> void;
 };
@@ -150,7 +161,7 @@ export const useWorkflowStore =
           };
         }),
 
-      exportWorkflow: ():Workflow => {
+      exportWorkflow: ():ExportedWorkflow => {
         const state = useWorkflowStore.getState();
 
         const now = new Date().toISOString();

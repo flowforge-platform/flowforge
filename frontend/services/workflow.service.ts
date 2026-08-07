@@ -1,41 +1,109 @@
 import { Workflow } from "@/types/workflow";
+import { WorkflowDefinition } from "@/types/workflow-definition";
+import { toWorkflowDefinition, fromWorkflowDefinition } from "@/lib/mappers/workflow.mapper";
+import { Edge, Node } from "@xyflow/react";
 
-const workflows: Workflow[] = [];
+import {
+  createWorkflow,
+  deleteWorkflow,
+  getWorkflowById,
+  getWorkflowDefinition,
+  getWorkflows,
+  updateWorkflow,
+  updateWorkflowDefinition,
+} from "@/lib/api/workflow";
+
+
 
 class WorkflowService {
-  async save(workflow: Workflow) {
-    const index = workflows.findIndex(
-      (w) => w.id === workflow.id
+  async create(
+    workflow: {
+      name: string;
+      description: string;
+    },
+    nodes: Node[],
+    edges: Edge[]
+  ) {
+    const createdWorkflow = await createWorkflow(workflow);
+
+    const definition = toWorkflowDefinition(nodes, edges);
+
+    await updateWorkflowDefinition(
+      createdWorkflow.id,
+      definition
+    );
+  
+    return createdWorkflow;
+  }
+
+  async update(
+    id: string,
+    workflow: {
+      name: string;
+      description: string;
+    },
+    nodes: Node[],
+    edges: Edge[]
+  ) {
+    const updatedWorkflow = await updateWorkflow(
+      id,
+      workflow
     );
 
-    if (index === -1) {
-      workflows.push(workflow);
-    } else {
-      workflows[index] = workflow;
-    }
+    const definition = toWorkflowDefinition(
+      nodes,
+      edges
+    );
 
-    return workflow;
+    await updateWorkflowDefinition(
+      id,
+      definition
+    );
+  
+    return updatedWorkflow;
   }
 
   async getAll() {
-    return workflows;
+    return await getWorkflows();
   }
 
   async getById(id: string) {
-    return workflows.find((w) => w.id === id);
+    return await getWorkflowById(id);
   }
 
   async delete(id: string) {
-    const index = workflows.findIndex(
-      (workflow) => workflow.id === id
-    );
-
-    if(index!==-1){
-      workflows.splice(index, 1)
-    }
+    return await deleteWorkflow(id);
   }
 
+  async getDefinition(workflowId: string) {}
+
+  async updateDefinition(
+    workflowId: string,
+    definition: WorkflowDefinition
+  ) {}
+
+  async publish(workflowId: string) {}
+
+  async loadWorkflow(id: string) {
+    const workflow = await getWorkflowById(id);
+
+    const definition = await getWorkflowDefinition(id);
+
+    const { nodes, edges } =
+      fromWorkflowDefinition(definition);
+
+    return {
+      id: workflow.id,
+      name: workflow.name,
+      description: workflow.description,
+
+      nodes,
+      edges,
+
+      createdAt: workflow.createdAt,
+      updatedAt: workflow.updatedAt,
+    };
+  }
 }
 
-export const workflowService =
-  new WorkflowService();
+export const workflowService = new WorkflowService();
