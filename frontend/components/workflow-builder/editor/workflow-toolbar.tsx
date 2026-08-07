@@ -45,7 +45,24 @@ export function WorkflowToolbar() {
     const handleSave = async () => {
       const workflow = exportWorkflow();
 
-      const savedWorkflow = await workflowService.save(workflow);
+      const savedWorkflow = workflowId
+        ? await workflowService.update(
+            workflow.id,
+            {
+              name: workflow.name,
+              description: workflow.description,
+            },
+            workflow.nodes,
+            workflow.edges
+          )
+        : await workflowService.create(
+            {
+              name: workflow.name,
+              description: workflow.description,
+            },
+            workflow.nodes,
+            workflow.edges
+          );
 
       setIsDirty(false)
 
@@ -59,10 +76,17 @@ export function WorkflowToolbar() {
     };
 
     const handleLoad = async () => {
-        const workflows = await workflowService.getAll();
-
-        if(workflows.length === 0) return;
-        importWorkflow(workflows[0]);
+        const workflows =
+          await workflowService.getAll();
+            
+        if (workflows.length === 0) return;
+            
+        const workflow =
+          await workflowService.loadWorkflow(
+            workflows[0].id
+          );
+        
+        importWorkflow(workflow);
     }
 
     const handleValidate = () => {

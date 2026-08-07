@@ -1,34 +1,20 @@
-import { Edge, Node } from "@xyflow/react";
-
-export type WorkflowNodeType =
-  | "start"
-  | "httpRequest"
-  | "condition";
-
-export interface BaseNodeData {
-  label: string;
-}
-
-export type StartNodeData = BaseNodeData;
-
-export interface HttpRequestNodeData extends BaseNodeData {
-  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-  endpoint: string;
-  timeout: number;
-}
-
-export interface ConditionNodeData extends BaseNodeData {
-  condition: string;
-}
-
 export interface Workflow {
   id: string;
+  organizationId: string;
+  createdBy: string;
   name: string;
   description: string;
-
-  nodes: Node[];
-  edges: Edge[];
-
+  status: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface CreateWorkflowRequest {
+  name: string;
+  description: string;
+}
+
+export interface UpdateWorkflowRequest {
+  name: string;
+  description: string;
 }
