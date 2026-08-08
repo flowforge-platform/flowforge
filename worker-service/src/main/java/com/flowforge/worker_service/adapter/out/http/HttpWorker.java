@@ -23,7 +23,7 @@ public class HttpWorker implements WorkerHandler {
 
     @Override
     public String getType() {
-        return "HTTP";
+        return "HTTP_REQUEST";
     }
 
     @Override

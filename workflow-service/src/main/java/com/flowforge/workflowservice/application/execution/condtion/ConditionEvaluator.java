@@ -13,6 +13,11 @@ public class ConditionEvaluator {
             JsonNode output,
             ConditionConfig config
     ) {
+        if (output == null || output.isNull()) {
+            throw new BusinessException(
+                    ErrorCode.CONDITION_FIELD_NOT_FOUND
+            );
+        }
         String field = config.field();
         ConditionOperator operator = config.operator();
         JsonNode expectedValue = config.value();
