@@ -1,5 +1,7 @@
 package com.flowforge.workflowservice.application.execution.engine;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.flowforge.workflowservice.application.execution.SystemNodeExecutor;
 import com.flowforge.workflowservice.application.execution.event.TaskFailedEvent;
 import com.flowforge.workflowservice.application.execution.event.TaskSucceededEvent;
@@ -33,6 +35,7 @@ public class ExecutionEngine {
     private final TaskStateMachine taskStateMachine;
     private final SystemNodeExecutor systemNodeExecutor;
     private final WorkflowExecutionRepository workflowExecutionRepository;
+    private final ObjectMapper objectMapper;
 
     @Transactional
     public void handleTaskCompleted(TaskExecution taskExecution) {
@@ -108,6 +111,28 @@ public class ExecutionEngine {
                         .orElseThrow(() ->
                                 new BusinessException(ErrorCode.TASK_EXECUTION_NOT_FOUND));
 
+        try {
+            JsonNode output;
+
+            if (event.message() == null) {
+                output = objectMapper.nullNode();
+            } else {
+                try {
+                    // If the worker returned valid JSON, preserve it as JSON.
+                    output = objectMapper.readTree(event.message());
+                } catch (Exception e) {
+                    // Otherwise treat the worker result as plain text.
+                    output = objectMapper.valueToTree(event.message());
+                }
+            }
+
+            taskExecution.setOutput(output);
+
+        } catch (Exception e) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_TASK_OUTPUT
+            );
+        }
         taskStateMachine.completeTaskExecution(taskExecution);
         taskExecutionRepository.save(taskExecution);
         handleTaskCompleted(taskExecution);

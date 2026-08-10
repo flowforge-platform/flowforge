@@ -30,6 +30,7 @@ public enum ErrorCode {
     CONDITION_FIELD_NOT_FOUND(HttpStatus.NOT_FOUND,"Condition field not found in task output"),
     CONDITION_BRANCH_NOT_FOUND(HttpStatus.NOT_FOUND,"condition branch not found"),
     INVALID_CONDITION_COMPARISON(HttpStatus.BAD_REQUEST, "Invalid condition comparison"),
+    INVALID_TASK_OUTPUT(HttpStatus.BAD_REQUEST,"Invalid task output"),
     INVALID_CONDITION_OPERATOR(HttpStatus.BAD_REQUEST, "Unsupported condition operator");
 
     private final HttpStatus status;

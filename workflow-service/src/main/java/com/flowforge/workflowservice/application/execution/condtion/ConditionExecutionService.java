@@ -6,10 +6,12 @@ import com.flowforge.workflowservice.domain.edge.BranchType;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.presentation.dto.request.ConditionConfig;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ConditionExecutionService {
     private final ObjectMapper objectMapper;
     private final ConditionEvaluator conditionEvaluator;
@@ -18,6 +20,7 @@ public class ConditionExecutionService {
             JsonNode previousTaskOutput,
             WorkflowNode conditionNode
     ){
+        log.info("CONDITION previousTaskOutput: {}", previousTaskOutput);
         ConditionConfig config = objectMapper.convertValue(
                 conditionNode.getConfiguration(),
                 ConditionConfig.class

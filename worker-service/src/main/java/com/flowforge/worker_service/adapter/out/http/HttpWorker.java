@@ -55,7 +55,7 @@ public class HttpWorker implements WorkerHandler {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            return WorkerResult.success(task.getId(), "HTTP call succeeded: " + response.getStatusCode());
+            return WorkerResult.success(task.getId(), response.getBody());
         } else {
             throw new HttpTargetException("HTTP call failed: " + response.getStatusCode());
         }
