@@ -7,6 +7,7 @@ import com.flowforge.workflowservice.common.exception.BusinessException;
 import com.flowforge.workflowservice.common.exception.ErrorCode;
 import com.flowforge.workflowservice.domain.execution.TaskExecution;
 import com.flowforge.workflowservice.domain.execution.WorkflowExecution;
+import com.flowforge.workflowservice.domain.node.NodeType;
 import com.flowforge.workflowservice.domain.node.WorkflowNode;
 import com.flowforge.workflowservice.infrastructure.persistence.TaskExecutionRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class NodeScheduler {
             WorkflowNode node
     ) {
             log.info("Entered NodeScheduler");
+
             TaskExecution taskExecution =
                     taskExecutionRepository
                             .findByWorkflowExecutionIdAndNodeId(
@@ -43,6 +45,7 @@ public class NodeScheduler {
                     node.getNodeKey(),
                     node.getNodeType()
             );
+
 
                 taskStateMachine.startTaskExecution(taskExecution);
                 taskExecutionRepository.save(taskExecution);

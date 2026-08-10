@@ -33,4 +33,10 @@ public class WorkflowEdge {
 
     @CreationTimestamp
     private Instant createdAt;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "branch_type", nullable = false)
+    private BranchType branchType = BranchType.DEFAULT;
+
 }

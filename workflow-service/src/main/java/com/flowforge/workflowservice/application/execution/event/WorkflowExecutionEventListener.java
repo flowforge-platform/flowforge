@@ -14,7 +14,10 @@ public class WorkflowExecutionEventListener {
 
     @KafkaListener(
             topics = "task-succeeded",
-            groupId = "workflow-service"
+            groupId = "workflow-service",
+            properties = {
+                    "spring.json.value.default.type:com.flowforge.workflowservice.application.execution.event.TaskSucceededEvent"
+            }
     )
     public void consumeTaskCompleted(TaskSucceededEvent event) {
 
@@ -28,7 +31,10 @@ public class WorkflowExecutionEventListener {
 
     @KafkaListener(
             topics = "task-failed",
-            groupId = "workflow-service"
+            groupId = "workflow-service",
+            properties = {
+                    "spring.json.value.default.type:com.flowforge.workflowservice.application.execution.event.TaskFailedEvent"
+            }
     )
     public void consumeTaskFailed(TaskFailedEvent event){
         log.info(

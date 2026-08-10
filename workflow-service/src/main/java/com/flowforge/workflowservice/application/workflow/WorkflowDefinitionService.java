@@ -105,6 +105,7 @@ public class WorkflowDefinitionService {
                     .workflow(workflow)
                     .sourceNode(sourceNode)
                     .targetNode(targetNode)
+                    .branchType(edgeRequest.branchType())
                     .build();
             workflowEdgeRepository.save(edge);
         }

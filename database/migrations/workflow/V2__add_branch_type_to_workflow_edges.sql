@@ -1,0 +1,2 @@
+ALTER TABLE workflow_edges
+    ADD COLUMN branch_type VARCHAR(20) NOT NULL DEFAULT 'DEFAULT';
