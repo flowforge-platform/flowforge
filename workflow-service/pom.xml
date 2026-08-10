@@ -122,6 +122,18 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>1.37</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.37</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 
@@ -151,10 +163,18 @@
                         </goals>
                         <configuration>
                             <annotationProcessorPaths>
+                                <!-- Lombok -->
                                 <path>
                                     <groupId>org.projectlombok</groupId>
                                     <artifactId>lombok</artifactId>
                                 </path>
+                                <!-- JMH -->
+                                <path>
+                                    <groupId>org.openjdk.jmh</groupId>
+                                    <artifactId>jmh-generator-annprocess</artifactId>
+                                    <version>1.37</version>
+                                </path>
+
                             </annotationProcessorPaths>
                         </configuration>
                     </execution>
@@ -175,6 +195,7 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
