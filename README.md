@@ -20,7 +20,7 @@ Coordinating multi-step workflows across independent services is hard: you need 
 
 The frontend (Next.js, TypeScript, React Flow, Tailwind) is where users build and manage workflows. The core, backend-integrated piece is the **workflow editor**: a drag-and-drop canvas for constructing a DAG from Start, HTTP Request, and Condition nodes, with node configuration and save/load against the real workflow API.
 
-The app also ships UI shells for a dashboard, execution list, execution detail view, monitoring, templates, approvals, and settings. These screens are built and navigable but currently run on mock data rather than live backend calls — useful for demoing the product surface, not yet reflecting real execution state.
+The app also ships UI shells for a dashboard, execution list, execution detail view, monitoring, templates, approvals, and settings. These screens are built and navigable.
 
 ```mermaid
 flowchart LR
