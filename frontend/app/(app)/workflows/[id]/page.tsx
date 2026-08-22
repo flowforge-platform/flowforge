@@ -20,10 +20,9 @@ export default function WorkflowPage() {
         return;
       }
 
-      const workflow = await workflowService.getById(
+      const workflow = await workflowService.loadWorkflow(
         id as string
       );
-
       if (workflow) {
         importWorkflow(workflow);
       }

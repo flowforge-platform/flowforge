@@ -1,4 +1,4 @@
-import {create} from "zustand"
+import { create } from "zustand"
 import { Edge, Node, XYPosition } from "@xyflow/react";
 import { initialNodes, initialEdges } from "../react-flow/initial-workflow";
 import { createNode } from "../react-flow/node-factory";
@@ -11,6 +11,7 @@ interface ExportedWorkflow {
   id: string;
   name: string;
   description: string;
+  status: string;
   nodes: Node[];
   edges: Edge[];
   createdAt: string;
@@ -18,83 +19,110 @@ interface ExportedWorkflow {
 }
 
 type WorkflowStore = {
-    nodes: Node[];
+  nodes: Node[];
 
-    edges: Edge[];
+  edges: Edge[];
 
-    isDirty: boolean;
+  isDirty: boolean;
 
-    setIsDirty: (dirty:boolean) => void;
+  setIsDirty: (dirty: boolean) => void;
 
-    selectedNodeId: string | null;
+  selectedNodeId: string | null;
 
-    workflowId: string | null;
+  workflowId: string | null;
 
-    setWorkflowId: (id:string | null) => void;
+  setWorkflowId: (id: string | null) => void;
 
-    workflowName: string;
+  workflowStatus: string | null;
 
-    setWorkflowName: (
-      name:string
-    ) => void;
+  setWorkflowStatus: (status: string | null) => void;
 
-    addNode: (type: WorkflowNodeType, position:XYPosition) => void;
+  activeExecutionId: string | null;
 
-    deleteNode: (id:string) => void;
+  activeExecutionStatus: string | null;
 
-    setNodes: (
-        updater:
-            | Node[]
-            | ((nodes: Node[]) => Node[])
-    ) => void;
+  setActiveExecution: (id: string | null, status: string | null) => void;
 
-    setEdges: (
-        updater:
-            | Edge[]
-            | ((edges: Edge[]) => Edge[])
-    ) => void;
+  workflowName: string;
 
-    setSelectedNodeId: (
-        id: string | null
-    ) => void;
+  setWorkflowName: (
+    name: string
+  ) => void;
 
-    duplicateNode: (id:string) => void;
-    
-    exportWorkflow: ()=> ExportedWorkflow;
+  addNode: (type: WorkflowNodeType, position: XYPosition) => void;
 
-    importWorkflow: (workflow:ExportedWorkflow) => void;
+  deleteNode: (id: string) => void;
 
-    resetWorkflow: ()=> void;
+  setNodes: (
+    updater:
+      | Node[]
+      | ((nodes: Node[]) => Node[])
+  ) => void;
+
+  setEdges: (
+    updater:
+      | Edge[]
+      | ((edges: Edge[]) => Edge[])
+  ) => void;
+
+  setSelectedNodeId: (
+    id: string | null
+  ) => void;
+
+  duplicateNode: (id: string) => void;
+
+  exportWorkflow: () => ExportedWorkflow;
+
+  importWorkflow: (workflow: ExportedWorkflow) => void;
+
+  resetWorkflow: () => void;
 };
 
 export const useWorkflowStore =
-  create<WorkflowStore>((set)=>({
+  create<WorkflowStore>((set) => ({
 
-    nodes:initialNodes,
-    edges:initialEdges,
-    selectedNodeId:null,
+    nodes: initialNodes,
+    edges: initialEdges,
+    selectedNodeId: null,
 
     workflowId: null,
 
-    setWorkflowId: (id)=>
+    setWorkflowId: (id) =>
       set({
         workflowId: id,
+      }),
+
+    workflowStatus: "DRAFT",
+
+    setWorkflowStatus: (status) =>
+      set({
+        workflowStatus: status,
+      }),
+
+    activeExecutionId: null,
+
+    activeExecutionStatus: null,
+
+    setActiveExecution: (id, status) =>
+      set({
+        activeExecutionId: id,
+        activeExecutionStatus: status,
       }),
 
     setNodes: (updater) =>
       set((state) => ({
         nodes:
-      typeof updater === "function"
-        ? updater(state.nodes)
-        : updater,
+          typeof updater === "function"
+            ? updater(state.nodes)
+            : updater,
       })),
 
     setEdges: (updater) =>
       set((state) => ({
         edges:
-      typeof updater === "function"
-        ? updater(state.edges)
-        : updater,
+          typeof updater === "function"
+            ? updater(state.edges)
+            : updater,
       })),
 
     setSelectedNodeId: (id) =>
@@ -105,7 +133,7 @@ export const useWorkflowStore =
     addNode: (type, position) =>
       set((state) => {
         const newNode = createNode(type, position);
-      
+
         return {
           nodes: [...state.nodes, newNode],
           isDirty: true
@@ -117,89 +145,99 @@ export const useWorkflowStore =
         nodes: state.nodes.filter(
           (node) => node.id !== id
         ),
-      
+
         edges: state.edges.filter(
           (edge) =>
             edge.source !== id &&
             edge.target !== id
         ),
-      
+
         selectedNodeId:
           state.selectedNodeId === id
             ? null
             : state.selectedNodeId,
       })),
 
-      workflowName: "Untitled Workflow",
+    workflowName: "Untitled Workflow",
 
-      setWorkflowName: (name) =>
-        set({
-          workflowName: name,
-        }),
+    setWorkflowName: (name) =>
+      set({
+        workflowName: name,
+      }),
 
-      duplicateNode: (id) =>
-        set((state) => {
-          const node = state.nodes.find(
-            (n) => n.id === id
-          );
-        
-          if (!node) return state;
-        
-          const duplicatedNode = {
-            ...node,
-            id: crypto.randomUUID(),
-            position: {
-              x: node.position.x + 40,
-              y: node.position.y + 40,
-            },
-            selected: false,
-          };
-        
-          return {
-            nodes: [...state.nodes, duplicatedNode],
-            isDirty:true
-          };
-        }),
+    duplicateNode: (id) =>
+      set((state) => {
+        const node = state.nodes.find(
+          (n) => n.id === id
+        );
 
-      exportWorkflow: ():ExportedWorkflow => {
-        const state = useWorkflowStore.getState();
+        if (!node) return state;
 
-        const now = new Date().toISOString();
+        const duplicatedNode = {
+          ...node,
+          id: crypto.randomUUID(),
+          position: {
+            x: node.position.x + 40,
+            y: node.position.y + 40,
+          },
+          selected: false,
+        };
 
         return {
-          id: state.workflowId ?? crypto.randomUUID(),
-          name: state.workflowName,
-          description: "",
-
-          nodes: state.nodes,
-          edges: state.edges,
-
-          createdAt: now,
-          updatedAt: now,
+          nodes: [...state.nodes, duplicatedNode],
+          isDirty: true
         };
-      },
+      }),
+
+      
+    exportWorkflow: (): ExportedWorkflow => {
+      const state = useWorkflowStore.getState();
+
+      const now = new Date().toISOString();
+
+      return {
+        id: state.workflowId ?? crypto.randomUUID(),
+        name: state.workflowName,
+        description: "",
+        status: state.workflowStatus ?? "DRAFT",
+
+        nodes: state.nodes,
+        edges: state.edges,
+
+        createdAt: now,
+        updatedAt: now,
+      };
+    },
 
     importWorkflow: (workflow) =>
       set({
         workflowId: workflow.id,
         workflowName: workflow.name,
+        workflowStatus: workflow.status ?? "DRAFT",
+        activeExecutionId: null,
+        activeExecutionStatus: null,
         nodes: workflow.nodes,
         edges: workflow.edges,
         selectedNodeId: null,
+        isDirty: false,
       }),
 
     resetWorkflow: () =>
       set({
         workflowId: null,
         workflowName: "Untitled Workflow",
+        workflowStatus: "DRAFT",
+        activeExecutionId: null,
+        activeExecutionStatus: null,
         nodes: initialNodes,
         edges: initialEdges,
         selectedNodeId: null,
+        isDirty: false,
       }),
 
     isDirty: false,
 
-    setIsDirty: (dirty)=>
+    setIsDirty: (dirty) =>
       set({
         isDirty: dirty,
       })

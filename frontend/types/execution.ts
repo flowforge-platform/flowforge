@@ -1,53 +1,68 @@
-export type ExecutionStatus =
+export type BackendExecutionStatus =
+  | "PENDING"
   | "RUNNING"
-  | "FAILED"
   | "COMPLETED"
-  | "WAITING_APPROVAL"
-  | "RETRYING";
+  | "FAILED";
+
+export type ExecutionStatus = BackendExecutionStatus | string;
+
+export interface StartExecutionResponse {
+  workflowId: string;
+  status: BackendExecutionStatus | string;
+}
+
+export interface GetExecutionResponse {
+  executionId: string;
+  workflowId: string;
+  status: BackendExecutionStatus | string;
+  startedAt: string;
+  completedAt: string | null;
+}
+
+export interface TaskExecutionResponse {
+  id?: string;
+  taskExecutionId?: string;
+  nodeId: string;
+  nodeType: string;
+  status: string;
+  startedAt: string;
+  completedAt: string | null;
+  errorMessage: string | null;
+}
 
 export interface Execution {
   id: string;
-
   workflow: {
     id: string;
     name: string;
-    category: string;
-    source: string;
+    category?: string;
+    source?: string;
   };
-
   status: ExecutionStatus;
-
-  progress: {
+  startedAt: string;
+  completedAt?: string | null;
+  duration: number | null;
+  progress?: {
     completedNodes: number;
     totalNodes: number;
-  };
-
-  startedAt: string;
-
-  duration: number | null;
-
-  currentNode: string | null;
-
-  retryCount: number;
+  } | null;
+  currentNode?: string | null;
+  retryCount?: number;
 }
 
 export interface ExecutionMetrics {
   activeThreads: number;
   activeThreadsChange: number;
-
   successRate: number;
-
   averageLatency: number;
   latencyChange: number;
-
   systemHealth: "OPTIMAL" | "DEGRADED" | "CRITICAL";
 }
 
 export interface ExecutionsData {
   executions: Execution[];
-  metrics: ExecutionMetrics;
-
-  pagination: {
+  metrics?: ExecutionMetrics;
+  pagination?: {
     page: number;
     pageSize: number;
     totalItems: number;

@@ -1,3 +1,5 @@
+export type { WorkflowNodeType } from "./workflow-definition";
+
 export interface Workflow {
   id: string;
   organizationId: string;

@@ -1,5 +1,6 @@
 export type ExecutionNodeStatus =
   | "IDLE"
+  | "PENDING"
   | "RUNNING"
   | "SUCCESS"
   | "FAILED"
@@ -26,7 +27,8 @@ export interface ExecutionTimelineItem {
   title: string;
   description: string;
   timestamp: string;
-  status: "SUCCESS" | "WAITING" | "FAILED";
+  status: "SUCCESS" | "WAITING" | "FAILED" | "PENDING" | "RUNNING";
+  errorMessage?: string | null;
 }
 
 export interface ExecutionLog {
@@ -38,6 +40,8 @@ export interface ExecutionLog {
 
 export interface ExecutionDetails {
   id: string;
+
+  workflowId?: string;
 
   workflowName: string;
 

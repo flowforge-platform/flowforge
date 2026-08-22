@@ -3,7 +3,6 @@
 import {
   Background,
   Controls,
-  MiniMap,
   ReactFlow,
   type Node,
   type Edge,
@@ -33,10 +32,13 @@ export default function WorkflowExecutionCanvas({
       nodesFocusable={false}
       edgesFocusable={false}
       connectOnClick={false}
+      colorMode="dark"
     >
-      <MiniMap />
-      <Controls />
-      <Background />
+      <Controls
+        position="bottom-left"
+        className="!bg-[#161618] !border-[#2A2A2E] !rounded-lg !shadow-xl overflow-hidden [&>button]:!bg-[#161618] [&>button]:!border-b-[#2A2A2E] last:[&>button]:!border-b-0 [&>button]:!text-zinc-200 [&>button:hover]:!bg-[#242428] [&>button_svg]:!fill-zinc-200 [&>button_svg]:!stroke-zinc-200"
+      />
+      <Background color="#27272a" gap={16} />
     </ReactFlow>
   );
 }

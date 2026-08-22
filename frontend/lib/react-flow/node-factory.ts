@@ -1,7 +1,8 @@
 import { Node, XYPosition } from "@xyflow/react";
+import { WorkflowNodeType } from "@/types/workflow-definition";
 
 export function createNode(
-  type: "start" | "httpRequest" | "condition", position : XYPosition
+  type: WorkflowNodeType, position: XYPosition
 ): Node {
   switch (type) {
     case "start":
@@ -11,6 +12,16 @@ export function createNode(
         position,
         data: {
           label: "Start",
+        },
+      };
+
+    case "end":
+      return {
+        id: crypto.randomUUID(),
+        type,
+        position,
+        data: {
+          label: "End",
         },
       };
 

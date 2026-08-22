@@ -1,7 +1,7 @@
 import { api } from "./axios";
 import { CreateWorkflowRequest, UpdateWorkflowRequest } from "@/types/workflow";
 import { Workflow } from "@/types/workflow";
-import { WorkflowDefinition } from "@/types/workflow-definition";
+import { WorkflowDefinition, WorkflowDefinitionResponse } from "@/types/workflow-definition";
 
 export const createWorkflow = async (
   data: CreateWorkflowRequest
@@ -50,8 +50,8 @@ export const deleteWorkflow = async (
 
 export const getWorkflowDefinition = async (
   workflowId: string
-): Promise<WorkflowDefinition> => {
-  const response = await api.get(
+): Promise<WorkflowDefinitionResponse> => {
+  const response = await api.get<WorkflowDefinitionResponse>(
     `/api/v1/workflows/${workflowId}/definition`
   );
 
@@ -66,4 +66,10 @@ export const updateWorkflowDefinition = async (
     `/api/v1/workflows/${workflowId}/definition`,
     definition
   );
+};
+
+export const publishWorkflow = async (
+  workflowId: string
+): Promise<void> => {
+  await api.post(`/api/v1/workflows/${workflowId}/publish`);
 };

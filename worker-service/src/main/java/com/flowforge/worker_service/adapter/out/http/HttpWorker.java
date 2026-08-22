@@ -23,7 +23,7 @@ public class HttpWorker implements WorkerHandler {
 
     @Override
     public String getType() {
-        return "HTTP";
+        return "HTTP_REQUEST";
     }
 
     @Override
@@ -51,7 +51,7 @@ public class HttpWorker implements WorkerHandler {
         HttpMethod method = HttpMethod.valueOf(config.method().toUpperCase());
 
         ResponseEntity<String> response = restTemplate.exchange(
-                config.url(), method, requestEntity, String.class
+                config.endpoint(), method, requestEntity, String.class
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {

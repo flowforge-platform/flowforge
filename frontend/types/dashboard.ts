@@ -1,6 +1,6 @@
 export interface DashboardStats {
   totalWorkflows: number;
-  workflowGrowth: number;
+  createdThisWeek: number;
 
   runningExecutions: number;
 
@@ -8,9 +8,9 @@ export interface DashboardStats {
   successRate: number;
 
   failedExecutions24h: number;
-  failureChange: number;
+  failureChange?: number;
 
-  pendingApprovals: number;
+  totalExecutions: number;
 }
 
 export type ExecutionStatus = "RUNNING" | "WAITING";
@@ -40,10 +40,8 @@ export interface Activity {
 export interface SystemHealth {
   successRate: number;
   failureRate: number;
-  retryCount: number;
   activeInstances: number;
   averageExecutionTime: number;
-  resourceUsage: "OPTIMAL" | "MODERATE" | "HIGH";
 }
 
 export interface DashboardData {

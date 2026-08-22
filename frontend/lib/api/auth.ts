@@ -10,10 +10,17 @@ export async function login(credentials: LoginRequest) {
   return response.data;
 }
 
-export async function refreshToken(refreshToken: string) {
-  return api.post("/api/auth/refresh", {
-    refreshToken,
-  });
+export async function refreshToken(
+  refreshToken: string
+): Promise<LoginResponse> {
+  const response = await api.post<LoginResponse>(
+    "/api/auth/refresh",
+    {
+      refreshToken,
+    }
+  );
+
+  return response.data;
 }
 
 export async function registerOrg(data: RegisterRequest) {

@@ -1,5 +1,6 @@
 import {
   Play,
+  Square,
   Globe,
   GitBranch,
   LucideIcon,
@@ -20,6 +21,12 @@ export const NODE_LIBRARY: NodeLibraryItem[] = [
     title: "Start",
     description: "Workflow entry point",
     icon: Play,
+  },
+  {
+    type: "end",
+    title: "End",
+    description: "Workflow exit point",
+    icon: Square,
   },
   {
     type: "httpRequest",

@@ -30,7 +30,7 @@ export default function RunningExecutions({
 
       <div className="space-y-4">
         {executions.map((execution) => {
-          const status = statusConfig[execution.status];
+          const status = statusConfig[execution.status] || statusConfig.RUNNING;
 
           return (
             <div

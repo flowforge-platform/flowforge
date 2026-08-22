@@ -4,16 +4,19 @@ import {
   WorkflowEdge,
   WorkflowNode,
   WorkflowNodeType,
+  WorkflowDefinitionResponse,
 } from "@/types/workflow-definition";
 
 const NODE_TYPE_MAP: Record<WorkflowNodeType, string> = {
   start: "START",
+  end: "END",
   httpRequest: "HTTP_REQUEST",
   condition: "CONDITION",
 };
 
 const REVERSE_NODE_TYPE_MAP = {
   START: "start",
+  END: "end",
   HTTP_REQUEST: "httpRequest",
   CONDITION: "condition",
 } as const;
@@ -30,7 +33,7 @@ export const toWorkflowDefinition = (
 
       nodeType:
         NODE_TYPE_MAP[
-          node.type as WorkflowNodeType
+        node.type as WorkflowNodeType
         ],
 
       positionX: node.position.x,
@@ -47,18 +50,18 @@ export const toWorkflowDefinition = (
 };
 
 export const fromWorkflowDefinition = (
-  definition: WorkflowDefinition
+  definition: WorkflowDefinitionResponse
 ): {
   nodes: Node[];
   edges: Edge[];
 } => {
   return {
     nodes: definition.nodes.map((node): Node => ({
-      id: node.clientId,
+      id: node.id,
 
       type:
         REVERSE_NODE_TYPE_MAP[
-          node.nodeType as keyof typeof REVERSE_NODE_TYPE_MAP
+        node.nodeType as keyof typeof REVERSE_NODE_TYPE_MAP
         ],
 
       position: {
@@ -70,10 +73,10 @@ export const fromWorkflowDefinition = (
     })),
 
     edges: definition.edges.map((edge): Edge => ({
-      id: `${edge.sourceClientId}-${edge.targetClientId}`,
-        
-      source: edge.sourceClientId,
-      target: edge.targetClientId,
+      id: `${edge.sourceNodeId}-${edge.targetNodeId}`,
+
+      source: edge.sourceNodeId,
+      target: edge.targetNodeId,
     })),
   };
 };

@@ -31,7 +31,7 @@ spring:
           json:
             add:
               type:
-                headers: false
+                headers: true
 
     consumer:
       group-id: worker-group
@@ -89,6 +89,12 @@ resilience4j:
       http:
         max-concurrent-calls: 10
         max-wait-duration: 500ms
+
+  timelimiter:
+    instances:
+      http:
+        timeoutDuration: 10s
+        cancelRunningFuture: true
 
 management:
   endpoints:

@@ -9,11 +9,10 @@ import {
   getWorkflowById,
   getWorkflowDefinition,
   getWorkflows,
+  publishWorkflow,
   updateWorkflow,
   updateWorkflowDefinition,
 } from "@/lib/api/workflow";
-
-
 
 class WorkflowService {
   async create(
@@ -32,7 +31,7 @@ class WorkflowService {
       createdWorkflow.id,
       definition
     );
-  
+
     return createdWorkflow;
   }
 
@@ -50,16 +49,18 @@ class WorkflowService {
       workflow
     );
 
-    const definition = toWorkflowDefinition(
-      nodes,
-      edges
-    );
+    if (updatedWorkflow.status !== "PUBLISHED") {
+      const definition = toWorkflowDefinition(
+        nodes,
+        edges
+      );
 
-    await updateWorkflowDefinition(
-      id,
-      definition
-    );
-  
+      await updateWorkflowDefinition(
+        id,
+        definition
+      );
+    }
+
     return updatedWorkflow;
   }
 
@@ -75,14 +76,16 @@ class WorkflowService {
     return await deleteWorkflow(id);
   }
 
-  async getDefinition(workflowId: string) {}
+  async getDefinition(workflowId: string) { }
 
   async updateDefinition(
     workflowId: string,
     definition: WorkflowDefinition
-  ) {}
+  ) { }
 
-  async publish(workflowId: string) {}
+  async publish(workflowId: string) {
+    return await publishWorkflow(workflowId);
+  }
 
   async loadWorkflow(id: string) {
     const workflow = await getWorkflowById(id);
@@ -96,6 +99,7 @@ class WorkflowService {
       id: workflow.id,
       name: workflow.name,
       description: workflow.description,
+      status: workflow.status,
 
       nodes,
       edges,
