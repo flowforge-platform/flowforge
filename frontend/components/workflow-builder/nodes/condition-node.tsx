@@ -5,6 +5,7 @@ import {
   Position,
 } from "@xyflow/react";
 import { GitBranch } from "lucide-react";
+import { getNodeStatusStyle } from "@/lib/react-flow/node-types";
 
 export function ConditionNode({
   data,
@@ -12,10 +13,16 @@ export function ConditionNode({
   data: {
     label: string;
     condition: string;
+    executionStatus?: string;
   };
 }) {
+  const borderClass = getNodeStatusStyle(
+    data?.executionStatus,
+    "border-yellow-500/50"
+  );
+
   return (
-    <div className="w-[260px] rounded-xl border border-yellow-500/50 bg-zinc-900 p-4">
+    <div className={`w-[260px] rounded-xl border bg-zinc-900 p-4 ${borderClass}`}>
       <Handle
         type="target"
         position={Position.Left}

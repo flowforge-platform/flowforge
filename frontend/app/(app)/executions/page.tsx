@@ -1,9 +1,6 @@
 import ExecutionsView from "@/components/executions/ExecutionsView";
-import { getExecutionsData } from "@/lib/api/executions";
 
-export default async function ExecutionsPage() {
-  const data = await getExecutionsData();
-
+export default function ExecutionsPage() {
   return (
     <main className="min-h-screen p-6 lg:p-8">
       <div className="mx-auto max-w-[1600px] space-y-6">
@@ -17,7 +14,7 @@ export default async function ExecutionsPage() {
           </p>
         </header>
 
-        <ExecutionsView data={data} />
+        <ExecutionsView />
       </div>
     </main>
   );

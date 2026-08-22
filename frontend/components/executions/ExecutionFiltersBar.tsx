@@ -36,31 +36,27 @@ const statuses: {
   label: string;
   value: ExecutionStatus | "ALL";
 }[] = [
-  {
-    label: "All States",
-    value: "ALL",
-  },
-  {
-    label: "Running",
-    value: "RUNNING",
-  },
-  {
-    label: "Completed",
-    value: "COMPLETED",
-  },
-  {
-    label: "Failed",
-    value: "FAILED",
-  },
-  {
-    label: "Waiting Approval",
-    value: "WAITING_APPROVAL",
-  },
-  {
-    label: "Retrying",
-    value: "RETRYING",
-  },
-];
+    {
+      label: "All States",
+      value: "ALL",
+    },
+    {
+      label: "Pending",
+      value: "PENDING",
+    },
+    {
+      label: "Running",
+      value: "RUNNING",
+    },
+    {
+      label: "Completed",
+      value: "COMPLETED",
+    },
+    {
+      label: "Failed",
+      value: "FAILED",
+    },
+  ];
 
 export default function ExecutionFiltersBar({
   filters,

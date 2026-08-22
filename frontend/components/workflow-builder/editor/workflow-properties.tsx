@@ -5,8 +5,9 @@ import { Node } from "@xyflow/react";
 
 
 export function WorkflowProperties() {
+  const { nodes, setNodes, selectedNodeId, workflowName, setIsDirty, workflowStatus } = useWorkflowStore();
 
-  const{nodes, setNodes, selectedNodeId, workflowName, setIsDirty} = useWorkflowStore();
+  const isPublished = workflowStatus === "PUBLISHED";
 
   const selectedNode = nodes.find(
     (node) => node.id === selectedNodeId
@@ -21,30 +22,38 @@ export function WorkflowProperties() {
   }
 
   const updateNodeField = (
-  key: string,
-  value: unknown
-) => {
-  setNodes((nds: Node[]) =>
-    nds.map((node) =>
-      node.id === selectedNode.id
-        ? {
-            ...node,
-            data: {
-              ...(node.data as any),
-              [key]: value,
-            },
-          }
-        : node
-    )
-  );
-  setIsDirty(true)
-};
+    key: string,
+    value: unknown
+  ) => {
+    if (isPublished) return;
+    setNodes((nds: Node[]) =>
+      nds.map((node) =>
+        node.id === selectedNode.id
+          ? {
+              ...node,
+              data: {
+                ...(node.data as any),
+                [key]: value,
+              },
+            }
+          : node
+      )
+    );
+    setIsDirty(true);
+  };
 
   return (
     <div className="p-4">
-      <h2 className="mb-6 text-lg font-semibold">
-        {workflowName}
-      </h2>
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-foreground">
+          {workflowName}
+        </h2>
+        {isPublished && (
+          <span className="rounded-md border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-400">
+            Read Only
+          </span>
+        )}
+      </div>
 
       <div className="space-y-4">
         <div>
@@ -55,7 +64,7 @@ export function WorkflowProperties() {
           <input
             value={selectedNode.id}
             readOnly
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2"
+            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2 text-sm"
           />
         </div>
 
@@ -66,48 +75,40 @@ export function WorkflowProperties() {
 
           <input
             value={(selectedNode.data as any).label}
-            onChange={(e)=>{
-              updateNodeField("label", e.target.value)
-              
+            disabled={isPublished}
+            onChange={(e) => {
+              updateNodeField("label", e.target.value);
             }}
-            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2"
+            className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2 text-sm disabled:opacity-60"
           />
 
           {selectedNode.type === "httpRequest" && (
             <div>
-
               <div className="mt-4">
-
                 <label className="mb-2 block text-xs text-zinc-400">
                   Endpoint
                 </label>
 
-                <input value={(selectedNode.data as any).endpoint} 
-                onChange={(e)=>{
-                  updateNodeField(
-                    "endpoint",
-                    e.target.value
-                  )
-                }}
-                className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2" />
-
+                <input
+                  value={(selectedNode.data as any).endpoint}
+                  disabled={isPublished}
+                  onChange={(e) => {
+                    updateNodeField("endpoint", e.target.value);
+                  }}
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2 text-sm disabled:opacity-60"
+                />
               </div>
 
               <div className="mt-4">
-            
                 <label className="mb-2 block text-xs text-zinc-400">
                   Method
                 </label>
 
-                <select 
-                value={(selectedNode.data as any).method}
-                onChange={(e)=>
-                  updateNodeField(
-                    "method",
-                    e.target.value
-                  )
-                }
-                className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2"
+                <select
+                  value={(selectedNode.data as any).method}
+                  disabled={isPublished}
+                  onChange={(e) => updateNodeField("method", e.target.value)}
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2 text-sm disabled:opacity-60"
                 >
                   <option>GET</option>
                   <option>POST</option>
@@ -115,52 +116,38 @@ export function WorkflowProperties() {
                   <option>PATCH</option>
                   <option>DELETE</option>
                 </select>
-
-                {/* <input value={(selectedNode.data as any).method}  readOnly
-                className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2" /> */}
-
               </div>
 
               <div className="mt-4">
-
                 <label className="mb-2 block text-xs text-zinc-400">
                   Timeout
                 </label>
 
-                <input 
-                type="number"
-                value={(selectedNode.data as any).timeout}  
-                onChange={(e)=>
-                  updateNodeField(
-                    "timeout",
-                    Number(e.target.value)
-                  )
-                }
-                className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2" />
-
+                <input
+                  type="number"
+                  value={(selectedNode.data as any).timeout}
+                  disabled={isPublished}
+                  onChange={(e) => updateNodeField("timeout", Number(e.target.value))}
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2 text-sm disabled:opacity-60"
+                />
               </div>
-
             </div>
           )}
 
           {selectedNode.type === "condition" && (
             <div className="mt-4">
-              
               <label className="mb-2 block text-xs text-zinc-400">
                 Condition
               </label>
 
-              <textarea value={(selectedNode.data as any).condition}
-              onChange={(e)=>
-                updateNodeField(
-                  "condition",
-                  e.target.value
-                )
-              }
-              className="min-h-[120px] w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2"/>
+              <textarea
+                value={(selectedNode.data as any).condition}
+                disabled={isPublished}
+                onChange={(e) => updateNodeField("condition", e.target.value)}
+                className="min-h-[120px] w-full rounded-lg border border-zinc-800 bg-zinc-900 p-2 text-sm disabled:opacity-60"
+              />
             </div>
           )}
-          
         </div>
       </div>
     </div>

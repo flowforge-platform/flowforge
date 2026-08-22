@@ -11,26 +11,25 @@ export default function SystemHealth({
     {
       label: "Success Rate",
       value: `${health.successRate}%`,
+      badgeClass: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20",
     },
     {
       label: "Failure Rate",
       value: `${health.failureRate}%`,
-    },
-    {
-      label: "Retry Count",
-      value: health.retryCount,
+      badgeClass:
+        health.failureRate > 0
+          ? "text-red-400 bg-red-500/10 border-red-500/20"
+          : "text-zinc-400 bg-zinc-800/50 border-zinc-700/30",
     },
     {
       label: "Active Instances",
       value: health.activeInstances,
+      badgeClass: "text-sky-400 bg-sky-500/10 border-sky-500/20",
     },
     {
       label: "Avg. Execution Time",
       value: `${health.averageExecutionTime}s`,
-    },
-    {
-      label: "Resource Usage",
-      value: health.resourceUsage,
+      badgeClass: "text-zinc-300 bg-zinc-800/40 border-zinc-700/30",
     },
   ];
 
@@ -48,13 +47,15 @@ export default function SystemHealth({
         {healthItems.map((item) => (
           <div
             key={item.label}
-            className="flex items-center justify-between border-b pb-3 last:border-b-0 last:pb-0"
+            className="flex items-center justify-between border-b border-border/50 pb-3 last:border-b-0 last:pb-0"
           >
             <span className="text-sm text-muted-foreground">
               {item.label}
             </span>
 
-            <span className="text-sm font-semibold">
+            <span
+              className={`rounded-md border px-2.5 py-0.5 text-xs font-semibold ${item.badgeClass}`}
+            >
               {item.value}
             </span>
           </div>

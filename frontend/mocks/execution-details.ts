@@ -4,6 +4,8 @@ export const executionDetails: ExecutionDetails[] = [
   {
     id: "exec_883a_9921_f2",
 
+    workflowId: "mock_wf_1",
+
     workflowName: "Onboarding Sync",
 
     duration: "04:22:15",

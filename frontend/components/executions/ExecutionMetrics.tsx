@@ -84,11 +84,11 @@ export default function ExecutionMetrics({
 function formatSystemHealth(
   health: ExecutionMetricsType["systemHealth"]
 ) {
-  const labels = {
+  const labels: Record<ExecutionMetricsType["systemHealth"], string> = {
     OPTIMAL: "Optimal",
     DEGRADED: "Degraded",
     CRITICAL: "Critical",
   };
 
-  return labels[health];
+  return labels[health] || "Optimal";
 }

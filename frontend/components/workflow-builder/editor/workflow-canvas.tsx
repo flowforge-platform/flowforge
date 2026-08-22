@@ -32,100 +32,109 @@ export function WorkflowCanvas() {
     deleteNode,
     selectedNodeId,
     duplicateNode,
-    setIsDirty
+    setIsDirty,
+    workflowStatus
   } = useWorkflowStore();
+
+  const isPublished = workflowStatus === "PUBLISHED";
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
+      if (isPublished) return;
       setNodes((nds) => applyNodeChanges(changes, nds));
-      setIsDirty(true)
+      setIsDirty(true);
     },
-    [setNodes]
+    [setNodes, setIsDirty, isPublished]
   );
 
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
+      if (isPublished) return;
       setEdges((eds) => applyEdgeChanges(changes, eds));
-      setIsDirty(true)
+      setIsDirty(true);
     },
-    [setEdges]
+    [setEdges, setIsDirty, isPublished]
   );
 
   const onConnect = useCallback(
     (connection: Connection) => {
+      if (isPublished) return;
       setEdges((eds) => addEdge(connection, eds));
     },
-    [setEdges]
+    [setEdges, isPublished]
   );
 
   const { screenToFlowPosition } = useReactFlow();
 
   const onDragOver = useCallback(
-  (event: React.DragEvent) => {
-    event.preventDefault();
-
-    event.dataTransfer.dropEffect = "move";
-  },
-  []
-);
-
-  const onDrop = useCallback(
-  (event: React.DragEvent) => {
-    event.preventDefault();
-
-    const type = event.dataTransfer.getData(
-      "application/reactflow"
-    );
-
-    if (!type) return;
-
-    const position = screenToFlowPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-
-    addNode(
-      type as WorkflowNodeType,
-      position
-    );
-  },
-  [screenToFlowPosition, addNode]
-);
-
-useEffect(() => {
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (
-      (event.key === "Delete" ||
-        event.key === "Backspace") &&
-      selectedNodeId
-    ) {
-      deleteNode(selectedNodeId);
-    }
-
-    if (
-      (event.ctrlKey || event.metaKey) &&
-      event.key.toLowerCase() === "d"
-    ) {
+    (event: React.DragEvent) => {
+      if (isPublished) return;
       event.preventDefault();
-    
-      if (selectedNodeId) {
-        duplicateNode(selectedNodeId);
-      }
-    }
-  };
-
-  window.addEventListener(
-    "keydown",
-    handleKeyDown
+      event.dataTransfer.dropEffect = "move";
+    },
+    [isPublished]
   );
 
-  return () => {
-    window.removeEventListener(
+  const onDrop = useCallback(
+    (event: React.DragEvent) => {
+      if (isPublished) return;
+      event.preventDefault();
+
+      const type = event.dataTransfer.getData(
+        "application/reactflow"
+      );
+
+      if (!type) return;
+
+      const position = screenToFlowPosition({
+        x: event.clientX,
+        y: event.clientY,
+      });
+
+      addNode(
+        type as WorkflowNodeType,
+        position
+      );
+    },
+    [screenToFlowPosition, addNode, isPublished]
+  );
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (isPublished) return;
+
+      if (
+        (event.key === "Delete" ||
+          event.key === "Backspace") &&
+        selectedNodeId
+      ) {
+        deleteNode(selectedNodeId);
+      }
+
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key.toLowerCase() === "d"
+      ) {
+        event.preventDefault();
+
+        if (selectedNodeId) {
+          duplicateNode(selectedNodeId);
+        }
+      }
+    };
+
+    window.addEventListener(
       "keydown",
       handleKeyDown
     );
-  };
-}, [deleteNode, selectedNodeId]);
+
+    return () => {
+      window.removeEventListener(
+        "keydown",
+        handleKeyDown
+      );
+    };
+  }, [deleteNode, duplicateNode, selectedNodeId, isPublished]);
 
   return (
     <ReactFlow
@@ -135,6 +144,9 @@ useEffect(() => {
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       onConnect={onConnect}
+      nodesDraggable={!isPublished}
+      nodesConnectable={!isPublished}
+      deleteKeyCode={isPublished ? null : ["Backspace", "Delete"]}
       onNodeClick={(_, node) => {
         setSelectedNodeId(node.id);
       }}
